@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FinTrack Pro — Complete System</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f172a;--ink2:#475569;--ink3:#94a3b8;
+  --canvas:#f1f5f9;--surf:#fff;--surf2:#f8fafc;--surf3:#f1f5f9;
+  --bd:#e2e8f0;--bds:#cbd5e1;
+  --blue:#3b82f6;--blue-d:#1d4ed8;--blue-bg:#eff6ff;--blue-t:#bfdbfe;
+  --grn:#10b981;--grn-d:#047857;--grn-bg:#ecfdf5;
+  --red:#ef4444;--red-d:#b91c1c;--red-bg:#fef2f2;
+  --amb:#f59e0b;--amb-d:#b45309;--amb-bg:#fffbeb;
+  --pur:#8b5cf6;--pur-d:#6d28d9;--pur-bg:#f5f3ff;
+  --teal:#14b8a6;--teal-d:#0f766e;--teal-bg:#f0fdfa;
+  --fn:'Inter',system-ui,sans-serif
+}
+body{font-family:var(--fn);background:var(--canvas);color:var(--ink);font-size:13.5px;min-height:100vh}
+
+/* ── TOP MODE BAR ── */
+.modebar{background:#0f172a;padding:0 20px;height:46px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:300}
+.mb-brand{font-size:15px;font-weight:800;color:#f8fafc;display:flex;align-items:center;gap:8px;margin-right:16px}
+.mb-brand i{color:var(--blue);font-size:18px}
+.mb-sep{width:1px;height:20px;background:#334155;margin:0 6px}
+.mb-label{font-size:11.5px;color:#64748b;font-weight:600}
+.mb-btn{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:12.5px;font-weight:600;border:1.5px solid #334155;color:#94a3b8;transition:all .15s;background:transparent;white-space:nowrap}
+.mb-btn:hover{border-color:#475569;color:#e2e8f0}
+.mb-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.mb-btn i{font-size:13px}
+.mb-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#10b981;animation:pulse 2s infinite;display:inline-block;margin-right:4px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── LAYOUT ── */
+.shell{display:flex;min-height:calc(100vh - 46px)}
+.sidebar{width:218px;background:#0f172a;flex-shrink:0;display:flex;flex-direction:column;min-height:calc(100vh - 46px);position:sticky;top:46px;height:calc(100vh - 46px);overflow-y:auto}
+.sb-head{padding:16px 14px 10px;border-bottom:1px solid #1e293b}
+.sb-section-name{font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.sb-section-desc{font-size:11px;color:#475569}
+.sb-divider{padding:12px 14px 4px;font-size:10px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:6px}
+.sb-divider i{font-size:12px}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 12px;margin:1px 8px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#94a3b8;transition:all .12s;white-space:nowrap}
+.ni:hover{background:#1e293b;color:#e2e8f0}
+.ni.active{background:var(--blue-d);color:#fff}
+.ni i{font-size:15px;width:17px;flex-shrink:0}
+.ni .nb{font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:auto}
+.nb-red{background:#ef4444;color:#fff}
+.nb-amb{background:#f59e0b;color:#fff}
+.nb-grn{background:#10b981;color:#fff}
+.sb-foot{margin-top:auto;padding:10px 14px;border-top:1px solid #1e293b;font-size:11.5px;color:#64748b}
+
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{background:var(--surf);border-bottom:1px solid var(--bd);padding:0 24px;height:52px;display:flex;align-items:center;gap:12px;position:sticky;top:46px;z-index:40}
+.tb-left{flex:1;display:flex;align-items:center;gap:10px}
+.tb-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px}
+.tb-title i{font-size:17px}
+.bc{font-size:11.5px;color:var(--ink3)}
+.bc span{color:var(--blue);cursor:pointer}.bc span:hover{text-decoration:underline}
+.tb-right{display:flex;align-items:center;gap:8px}
+.srch{display:flex;align-items:center;gap:6px;background:var(--surf2);border:1.5px solid var(--bd);border-radius:8px;padding:5px 11px;width:180px}
+.srch i{font-size:13px;color:var(--ink3)}
+.srch input{background:none;border:none;outline:none;font-size:12.5px;color:var(--ink);width:100%;font-family:var(--fn)}
+
+.content{padding:22px 24px;flex:1}
+.view{display:none}.view.active{display:block}
+.page{display:none}.page.active{display:block}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .12s;font-family:var(--fn);white-space:nowrap}
+.btn i{font-size:14px}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:var(--blue-d)}
+.btn-grn{background:var(--grn);color:#fff}.btn-grn:hover{background:var(--grn-d)}
+.btn-red{background:var(--red);color:#fff}
+.btn-ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--bds)}.btn-ghost:hover{background:var(--surf2)}
+.btn-sm{padding:5px 11px;font-size:12.5px}
+.btn-xs{padding:3px 8px;font-size:11.5px}
+.btn-link{background:none;border:none;color:var(--blue);cursor:pointer;font-size:13px;padding:0;font-family:var(--fn);font-weight:500}
+.btn-link:hover{text-decoration:underline}
+
+/* ── GRID & SPACING ── */
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.mb{margin-bottom:16px}.mb2{margin-bottom:20px}
+
+/* ── KPI CARDS ── */
+.kpi{background:var(--surf);border-radius:12px;border:1px solid var(--bd);padding:18px;position:relative;overflow:hidden}
+.kpi-bar{position:absolute;top:0;left:0;width:3px;height:100%}
+.kpi-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px}
+.kpi-lbl{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-val{font-size:21px;font-weight:800;letter-spacing:-.4px;margin-bottom:3px}
+.kpi-sub{font-size:11.5px;color:var(--ink3)}
+.kpi-sub.up{color:var(--grn-d)}.kpi-sub.dn{color:var(--red-d)}.kpi-sub.w{color:var(--amb-d)}
+.prog{height:4px;border-radius:2px;overflow:hidden;background:var(--surf3);margin-top:10px}
+.progf{height:100%;border-radius:2px;transition:width .5s}
+
+/* ── CARDS ── */
+.card{background:var(--surf);border-radius:12px;border:1px solid var(--bd)}
+.ch{padding:13px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ct{font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px}
+.ct i{font-size:15px}
+.cb{padding:18px}
+
+/* ── TABLES ── */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:9px 14px;font-size:11px;font-weight:700;color:var(--ink3);background:var(--surf2);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--bd);white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid var(--bd);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+
+/* ── TAGS ── */
+.tag{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.tg{background:var(--grn-bg);color:#065f46}.tb{background:var(--blue-bg);color:#1e40af}
+.tr{background:var(--red-bg);color:#991b1b}.ta{background:var(--amb-bg);color:#92400e}
+.tp{background:var(--pur-bg);color:#5b21b6}.tt{background:var(--teal-bg);color:var(--teal-d)}
+.tgr{background:var(--surf3);color:var(--ink2)}
+.acc-chip{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11.5px;font-weight:600;background:var(--blue-bg);color:#1e40af;font-family:monospace}
+
+/* ── FORMS ── */
+.fg{margin-bottom:13px}
+.fl{font-size:11.5px;font-weight:600;color:var(--ink2);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.ai-tag{background:var(--grn-bg);color:#065f46;font-size:9.5px;padding:2px 5px;border-radius:5px;font-weight:700}
+.tax-tag{background:var(--pur-bg);color:#5b21b6;font-size:9.5px;padding:2px 5px;border-radius:5px;font-weight:700}
+input[type=text],input[type=number],input[type=date],input[type=email],select,textarea{width:100%;padding:8px 11px;border:1.5px solid var(--bd);border-radius:8px;font-size:13px;background:var(--surf);color:var(--ink);outline:none;transition:all .12s;font-family:var(--fn)}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+input[readonly]{background:var(--surf2)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:20px;z-index:9999;color:#fff;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:9px;transform:translateY(80px);opacity:0;transition:all .3s;font-size:13px;font-weight:500;max-width:340px}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ── SLIDE PANEL ── */
+.panel-bg{display:none;position:fixed;inset:0;z-index:400;background:rgba(15,23,42,.45)}
+.panel-bg.open{display:flex;align-items:flex-start;justify-content:flex-end}
+.panel{width:520px;max-width:95vw;height:calc(100vh - 46px);margin-top:46px;background:var(--surf);border-left:1px solid var(--bd);overflow-y:auto;display:flex;flex-direction:column}
+.ph{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;position:sticky;top:0;background:var(--surf);z-index:5}
+.ph-title{font-size:14px;font-weight:700;flex:1}
+.pb{padding:20px;flex:1}
+.psec{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--bd)}
+.psec:last-child{border-bottom:none}
+.psec-t{font-size:10.5px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:13px}
+.dl dt{color:var(--ink3);font-weight:500;white-space:nowrap}
+.dl dd{font-weight:500;text-align:right}
+
+/* ── AI SCAN ── */
+.upz{border:2px dashed var(--bds);border-radius:10px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surf2)}
+.upz:hover{border-color:var(--blue);background:var(--blue-bg)}
+.upz i{font-size:32px;color:var(--blue);display:block;margin-bottom:10px}
+.ai-spin-box{display:none;text-align:center;padding:32px}
+.ai-spin-box.vis{display:block}
+.spin{width:40px;height:40px;border:3px solid var(--bd);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── CHART ── */
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:100px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-wrap{width:100%;display:flex;gap:2px;align-items:flex-end;height:84px}
+.bar{flex:1;border-radius:4px 4px 0 0;transition:height .5s;min-height:3px}
+.bar-lbl{font-size:10px;color:var(--ink3)}
+
+/* ── CLIENT PORTAL SPECIFIC ── */
+.cp-hero{border-radius:12px;padding:20px;margin-bottom:16px;color:#fff}
+.cp-step{display:flex;align-items:center;gap:10px;padding:11px;background:var(--surf2);border-radius:8px;border:1px solid var(--bd);margin-bottom:7px;font-size:13px}
+.cp-step-ico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.wa-box{background:#e5ddd5;border-radius:10px;padding:14px}
+.wa-msg{max-width:78%;padding:9px 12px;border-radius:10px;margin-bottom:7px;font-size:12.5px;line-height:1.5}
+.wa-in{background:#fff;margin-right:auto;border-radius:2px 10px 10px 10px}
+.wa-out{background:#dcf8c6;margin-left:auto;border-radius:10px 2px 10px 10px}
+.wa-time{font-size:10px;color:#94a3b8;margin-top:3px;text-align:right}
+
+/* ── SECTION HEADER COLORS ── */
+.sec-finance .ct i,.sec-finance .tb-title i{color:#3b82f6}
+.sec-accounting .ct i,.sec-accounting .tb-title i{color:#8b5cf6}
+.sec-tax .ct i,.sec-tax .tb-title i{color:#14b8a6}
+.sec-clients .ct i,.sec-clients .tb-title i{color:#10b981}
+
+/* ── REPORT PREVIEW ── */
+.rpt-head{background:var(--blue-d);color:#fff;padding:14px 18px;border-radius:10px 10px 0 0}
+.rpt-body{border:1px solid var(--bd);border-top:none;border-radius:0 0 10px 10px}
+</style>
+</head>
+<body>
+
+<div id="toast-el" class="toast"><i id="ti" style="font-size:17px"></i><span id="tm"></span></div>
+<div id="panel-bg" class="panel-bg" onclick="if(event.target===this)closePanel()">
+  <div class="panel">
+    <div class="ph">
+      <button class="btn btn-ghost btn-xs" onclick="closePanel()"><i class="ti ti-x"></i></button>
+      <div class="ph-title" id="ph-title"></div>
+      <div id="ph-acts"></div>
+    </div>
+    <div class="pb" id="pb"></div>
+  </div>
+</div>
+
+<!-- ═══════════ TOP MODE BAR ═══════════ -->
+<div class="modebar">
+  <div class="mb-brand"><i class="ti ti-building-bank"></i>FinTrack Pro</div>
+  <div class="mb-sep"></div>
+  <div class="mb-label">Mode:</div>
+  <div class="mb-btn active" id="mb-op" onclick="switchView('operator')"><i class="ti ti-shield-check"></i>Operator</div>
+  <div class="mb-btn" id="mb-cl" onclick="switchView('client')"><i class="ti ti-user"></i>Portal Klien</div>
+  <div class="mb-right">
+    <span style="font-size:12px;color:#64748b"><span class="sync-dot"></span>Live sync</span>
+    <select style="background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:4px 8px;border-radius:7px;font-size:12px">
+      <option>Juni 2026</option><option>Mei 2026</option><option>Q2 2026</option>
+    </select>
+  </div>
+</div>
+
+<!-- ═══════════ OPERATOR VIEW ═══════════ -->
+<div id="view-operator" class="view active">
+<div class="shell">
+
+<!-- SIDEBAR OPERATOR -->
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-section-name">Operator Dashboard</div>
+    <div class="sb-section-desc">Kelola bisnis FinTrack Pro</div>
+  </div>
+
+  <div class="sb-divider"><i class="ti ti-home"></i>Utama</div>
+  <div class="ni active" onclick="goOp('dash',this)"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
+
+  <div class="sb-divider" style="color:#3b82f6"><i class="ti ti-cash"></i>Finance</div>
+  <div class="ni" onclick="goOp('scanner',this)"><i class="ti ti-scan"></i>Invoice Scanner<span class="nb nb-red">AI</span></div>
+  <div class="ni" onclick="goOp('transactions',this)"><i class="ti ti-arrows-exchange"></i>Transaksi</div>
+  <div class="ni" onclick="goOp('ar',this)"><i class="ti ti-receipt"></i>Piutang (A/R)</div>
+  <div class="ni" onclick="goOp('ap',this)"><i class="ti ti-credit-card"></i>Hutang (A/P)</div>
+  <div class="ni" onclick="goOp('cashflow',this)"><i class="ti ti-cash"></i>Arus Kas</div>
+
+  <div class="sb-divider" style="color:#8b5cf6"><i class="ti ti-notebook"></i>Akuntansi</div>
+  <div class="ni" onclick="goOp('journal',this)"><i class="ti ti-notebook"></i>Jurnal Entries</div>
+  <div class="ni" onclick="goOp('ledger',this)"><i class="ti ti-book"></i>Buku Besar</div>
+  <div class="ni" onclick="goOp('coa',this)"><i class="ti ti-list-numbers"></i>Daftar Akun</div>
+  <div class="ni" onclick="goOp('trialbal',this)"><i class="ti ti-scale"></i>Neraca Saldo</div>
+  <div class="ni" onclick="goOp('finreport',this)"><i class="ti ti-chart-bar"></i>Laporan Keuangan</div>
+
+  <div class="sb-divider" style="color:#14b8a6"><i class="ti ti-receipt-tax"></i>Pajak</div>
+  <div class="ni" onclick="goOp('taxsum',this)"><i class="ti ti-receipt-tax"></i>Ringkasan Pajak</div>
+  <div class="ni" onclick="goOp('ppn',this)"><i class="ti ti-percentage"></i>SPT Masa PPN</div>
+  <div class="ni" onclick="goOp('pph',this)"><i class="ti ti-coin"></i>PPh Withholding</div>
+  <div class="ni" onclick="goOp('taxcal',this)"><i class="ti ti-calendar-event"></i>Kalender Pajak<span class="nb nb-amb">2</span></div>
+
+  <div class="sb-divider" style="color:#10b981"><i class="ti ti-users"></i>Klien</div>
+  <div class="ni" onclick="goOp('clients',this)"><i class="ti ti-users"></i>Semua Klien<span class="nb nb-grn">12</span></div>
+  <div class="ni" onclick="goOp('onboard',this)"><i class="ti ti-user-plus"></i>Onboarding Baru</div>
+  <div class="ni" onclick="goOp('docsqueue',this)"><i class="ti ti-inbox"></i>Dokumen Masuk<span class="nb nb-amb">8</span></div>
+  <div class="ni" onclick="goOp('review',this)"><i class="ti ti-check"></i>Review & Approve<span class="nb nb-red">5</span></div>
+  <div class="ni" onclick="goOp('sendreport',this)"><i class="ti ti-send"></i>Kirim Laporan</div>
+  <div class="ni" onclick="goOp('billing',this)"><i class="ti ti-file-invoice"></i>Billing Klien</div>
+
+  <div class="sb-divider" style="color:#60a5fa"><i class="ti ti-building-bank"></i>Kas & Bank</div>
+  <div class="ni" onclick="goOp('kasbank',this)"><i class="ti ti-building-bank"></i>Kas & Bank</div>
+
+  <div class="sb-divider" style="color:#f59e0b"><i class="ti ti-stack-2"></i>Aset Tetap</div>
+  <div class="ni" onclick="goOp('assetlist',this)"><i class="ti ti-stack-2"></i>Daftar Aset</div>
+  <div class="ni" onclick="goOp('penyusutan',this)"><i class="ti ti-chart-line-down"></i>Penyusutan</div>
+  <div class="ni" onclick="goOp('disposal',this)"><i class="ti ti-trash"></i>Disposal</div>
+  <div class="ni" onclick="goOp('kartuaset',this)"><i class="ti ti-id-badge-2"></i>Kartu Aset</div>
+
+  <div class="sb-divider"><i class="ti ti-settings"></i>Sistem</div>
+  <div class="ni" onclick="goOp('settings',this)"><i class="ti ti-settings"></i>Pengaturan</div>
+
+  <div class="sb-foot"><span class="sync-dot"></span>FY 2026 · IDR · PT FinTrack</div>
+</aside>
+
+<!-- MAIN OPERATOR -->
+<div class="main">
+<div class="topbar">
+  <div class="tb-left">
+    <div class="tb-title" id="op-title"><i class="ti ti-layout-dashboard" style="color:var(--blue)"></i>Dashboard</div>
+    <div class="bc" id="op-bc"></div>
+  </div>
+  <div class="tb-right">
+    <div class="srch"><i class="ti ti-search"></i><input placeholder="Cari transaksi, klien..."></div>
+    <button class="btn btn-ghost btn-sm" onclick="goOp('scanner',null)"><i class="ti ti-scan"></i>Scan Invoice</button>
+    <button class="btn btn-blue btn-sm" onclick="toast('Laporan diekspor','success')"><i class="ti ti-download"></i>Export</button>
+  </div>
+</div>
+<div class="content">
+
+<!-- ── DASHBOARD ── -->
+<div id="pg-dash" class="page active">
+  <div class="g4 mb2">
+    <div class="kpi"><div class="kpi-bar" style="background:var(--grn)"></div><div class="kpi-icon" style="background:var(--grn-bg);color:var(--grn-d)"><i class="ti ti-trending-up"></i></div><div class="kpi-lbl">Revenue</div><div class="kpi-val" style="color:var(--grn-d)">Rp 284,5M</div><div class="kpi-sub up">+12.4% vs Mei</div><div class="prog"><div class="progf" style="width:74%;background:var(--grn)"></div></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-icon" style="background:var(--red-bg);color:var(--red-d)"><i class="ti ti-trending-down"></i></div><div class="kpi-lbl">Pengeluaran</div><div class="kpi-val" style="color:var(--red-d)">Rp 142,8M</div><div class="kpi-sub dn">+3.2% vs Mei</div><div class="prog"><div class="progf" style="width:50%;background:var(--red)"></div></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--pur)"></div><div class="kpi-icon" style="background:var(--pur-bg);color:var(--pur-d)"><i class="ti ti-receipt-tax"></i></div><div class="kpi-lbl">Pajak Terutang</div><div class="kpi-val" style="color:var(--pur-d)">Rp 26,1M</div><div class="kpi-sub w">Due 31 Jul 2026</div><div class="prog"><div class="progf" style="width:60%;background:var(--pur)"></div></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-icon" style="background:var(--blue-bg);color:var(--blue-d)"><i class="ti ti-chart-pie"></i></div><div class="kpi-lbl">Laba Bersih</div><div class="kpi-val" style="color:var(--blue-d)">Rp 141,7M</div><div class="kpi-sub up">Margin 49.8%</div><div class="prog"><div class="progf" style="width:68%;background:var(--blue)"></div></div></div>
+  </div>
+  <div class="g2 mb2">
+    <div class="card">
+      <div class="ch"><span class="ct" style="color:var(--blue-d)"><i class="ti ti-chart-bar" style="color:var(--blue)"></i>Revenue vs Pengeluaran 2026</span></div>
+      <div class="cb">
+        <div class="bar-chart" id="main-chart"></div>
+        <div style="display:flex;gap:14px;margin-top:8px;font-size:11.5px;color:var(--ink3)">
+          <span><span style="display:inline-block;width:8px;height:8px;background:var(--blue);border-radius:2px;margin-right:4px;vertical-align:middle"></span>Revenue</span>
+          <span><span style="display:inline-block;width:8px;height:8px;background:#fca5a5;border-radius:2px;margin-right:4px;vertical-align:middle"></span>Pengeluaran</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct"><i class="ti ti-clock" style="color:var(--blue)"></i>Transaksi terbaru</span><button class="btn-link btn-sm" onclick="goOp('transactions',null)">Semua →</button></div>
+      <div class="tw"><table>
+        <thead><tr><th>Ref</th><th>Keterangan</th><th>Jumlah</th><th>Status</th></tr></thead>
+        <tbody id="dash-tx-tb"></tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <div class="ch"><span class="ct"><i class="ti ti-users" style="color:var(--grn-d)"></i>Klien aktif</span><button class="btn-link btn-sm" onclick="goOp('clients',null)">Kelola →</button></div>
+      <div class="cb" style="padding:12px 16px">
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);font-size:13px"><span>Starter</span><span style="font-weight:600">5 klien — Rp 1,5jt</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);font-size:13px"><span>Bisnis</span><span style="font-weight:600">5 klien — Rp 4,0jt</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);font-size:13px"><span>Pro</span><span style="font-weight:600">2 klien — Rp 5,0jt</span></div>
+        <div style="padding-top:8px;border-top:2px solid var(--bd);display:flex;justify-content:space-between;font-weight:700;font-size:13.5px"><span>MRR</span><span style="color:var(--blue-d)">Rp 10,5jt</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct"><i class="ti ti-inbox" style="color:var(--amb-d)"></i>Perlu tindakan</span></div>
+      <div class="cb" style="padding:12px 16px">
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd);font-size:13px;cursor:pointer" onclick="goOp('docsqueue',null)"><span>Dokumen pending diproses</span><span class="tag ta">8</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd);font-size:13px;cursor:pointer" onclick="goOp('review',null)"><span>Jurnal menunggu approval</span><span class="tag tr">5</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd);font-size:13px;cursor:pointer" onclick="goOp('billing',null)"><span>Tagihan belum dibayar klien</span><span class="tag ta">2</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;font-size:13px;cursor:pointer" onclick="goOp('taxcal',null)"><span>Deadline pajak &lt; 30 hari</span><span class="tag tp">2</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct"><i class="ti ti-calendar-event" style="color:var(--pur-d)"></i>Deadline terdekat</span><button class="btn-link btn-sm" onclick="goOp('taxcal',null)">Semua →</button></div>
+      <div class="cb" style="padding:12px 16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd)"><div><div style="font-weight:600;font-size:13px">PPh 21 penyetoran</div><div style="font-size:11.5px;color:var(--ink3)">5 klien terdampak</div></div><span class="tag tr">20 Jul</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0"><div><div style="font-weight:600;font-size:13px">SPT Masa PPN</div><div style="font-size:11.5px;color:var(--ink3)">3 klien PKP</div></div><span class="tag ta">31 Jul</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FINANCE: INVOICE SCANNER ══ -->
+<div id="pg-scanner" class="page">
+  <div class="g2">
+    <div>
+      <div class="card mb sec-finance">
+        <div class="ch"><span class="ct"><i class="ti ti-scan" style="color:var(--blue)"></i>AI Invoice Scanner</span><span class="tag tb">AI Powered</span></div>
+        <div class="cb">
+          <div class="upz" onclick="trigScan()" id="upz-main">
+            <i class="ti ti-cloud-upload"></i>
+            <div style="font-weight:600;font-size:14px;margin-bottom:5px">Drop invoice / nota / struk di sini</div>
+            <div style="color:var(--ink3);font-size:12.5px;margin-bottom:14px">JPG · PNG · PDF — AI ekstrak semua data otomatis</div>
+            <button class="btn btn-blue" onclick="event.stopPropagation();trigScan()"><i class="ti ti-upload"></i>Pilih File</button>
+          </div>
+          <input type="file" id="fi" accept="image/*,.pdf" style="display:none">
+          <div class="ai-spin-box" id="ai-box"><div class="spin"></div><div style="font-weight:600;font-size:14px">AI membaca dokumen...</div><div style="color:var(--ink3);font-size:12px;margin-top:4px">OCR · Ekstrak data · Deteksi pajak · Mapping akun</div></div>
+        </div>
+      </div>
+      <div class="card sec-finance">
+        <div class="ch"><span class="ct"><i class="ti ti-file-text" style="color:var(--blue)"></i>Contoh dokumen</span></div>
+        <div class="cb" style="padding:12px 16px;display:flex;flex-direction:column;gap:8px">
+          <button class="btn btn-ghost" style="justify-content:flex-start" onclick="loadSample('purchase')"><i class="ti ti-file-invoice" style="color:var(--blue)"></i>Invoice Pembelian — PT Sumber Makmur (PPN 11%)</button>
+          <button class="btn btn-ghost" style="justify-content:flex-start" onclick="loadSample('sales')"><i class="ti ti-receipt" style="color:var(--grn-d)"></i>Invoice Penjualan — CV Digital Nusantara</button>
+          <button class="btn btn-ghost" style="justify-content:flex-start" onclick="loadSample('expense')"><i class="ti ti-shopping-cart" style="color:var(--amb-d)"></i>Struk Pengeluaran — no pajak</button>
+          <button class="btn btn-ghost" style="justify-content:flex-start" onclick="loadSample('service')"><i class="ti ti-tool" style="color:var(--pur-d)"></i>Jasa Konsultan — PPh 23 withholding</button>
+        </div>
+      </div>
+    </div>
+    <div id="scan-panel" style="display:none">
+      <div class="card sec-finance">
+        <div class="ch"><span class="ct"><i class="ti ti-sparkles" style="color:var(--blue)"></i>Hasil Ekstraksi AI</span><span class="tag tg" id="conf-tag">98% confidence</span></div>
+        <div class="cb">
+          <div class="g2 mb" style="gap:10px">
+            <div class="fg"><div class="fl">No. Dokumen <span class="ai-tag">AUTO</span></div><input type="text" id="f-no"></div>
+            <div class="fg"><div class="fl">Tanggal <span class="ai-tag">AUTO</span></div><input type="date" id="f-date"></div>
+          </div>
+          <div class="fg"><div class="fl">Vendor / Supplier <span class="ai-tag">AUTO</span></div><input type="text" id="f-vendor"></div>
+          <div class="g2 mb" style="gap:10px">
+            <div class="fg"><div class="fl">NPWP <span class="ai-tag">AUTO</span></div><input type="text" id="f-npwp"></div>
+            <div class="fg"><div class="fl">Jenis Dokumen</div><select id="f-type"><option value="purchase">Pembelian (A/P)</option><option value="sales">Penjualan (A/R)</option><option value="expense">Pengeluaran (Kas)</option></select></div>
+          </div>
+          <div class="g2 mb" style="gap:10px">
+            <div class="fg"><div class="fl">DPP (Dasar Pengenaan) <span class="ai-tag">AUTO</span></div><input type="number" id="f-dpp" oninput="calcTax()"></div>
+            <div class="fg"><div class="fl">Jenis Pajak <span class="tax-tag">DETECT</span></div><select id="f-tax" onchange="calcTax()"><option value="ppn11">PPN 11%</option><option value="ppn0">PPN 0% (Bebas)</option><option value="pph23">PPh 23 (2%)</option><option value="pph21">PPh 21 (5%)</option><option value="none">Tidak ada pajak</option></select></div>
+          </div>
+          <div class="g2 mb" style="gap:10px">
+            <div class="fg"><div class="fl">Pajak <span class="tax-tag">AUTO HITUNG</span></div><input type="number" id="f-taxamt" readonly></div>
+            <div class="fg"><div class="fl">Total</div><input type="number" id="f-total" readonly style="font-weight:700;color:var(--grn-d)"></div>
+          </div>
+          <div class="fg"><div class="fl">Akun Akuntansi <span class="ai-tag">AUTO MAP</span></div>
+            <select id="f-acc"><option value="1100">1100 — Piutang Usaha</option><option value="2100">2100 — Hutang Usaha</option><option value="6100" selected>6100 — Biaya Kantor</option><option value="6200">6200 — Utilitas</option><option value="5000">5000 — HPP</option></select>
+          </div>
+          <div class="fg"><div class="fl">Keterangan</div><textarea id="f-desc" rows="2" style="resize:none"></textarea></div>
+          <button class="btn btn-grn" style="width:100%;justify-content:center;padding:11px;font-size:14px" onclick="postEntry()"><i class="ti ti-check"></i>Post — Jurnal + Pajak otomatis</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FINANCE: TRANSAKSI ══ -->
+<div id="pg-transactions" class="page">
+  <div class="card sec-finance">
+    <div class="ch"><span class="ct"><i class="ti ti-arrows-exchange" style="color:var(--blue)"></i>Semua Transaksi</span>
+      <div style="display:flex;gap:8px">
+        <select style="padding:5px 9px;border:1.5px solid var(--bd);border-radius:7px;font-size:12.5px;background:var(--surf)"><option>Semua tipe</option><option>Penjualan</option><option>Pembelian</option><option>Pengeluaran</option></select>
+        <button class="btn btn-blue btn-sm" onclick="goOp('scanner',null)"><i class="ti ti-plus"></i>Tambah</button>
+      </div>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Tanggal</th><th>Referensi</th><th>Tipe</th><th>Pihak</th><th>DPP</th><th>Pajak</th><th>Total</th><th>Akun</th><th>Status</th><th></th></tr></thead>
+      <tbody id="tx-tb"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ FINANCE: A/R ══ -->
+<div id="pg-ar" class="page">
+  <div class="g4 mb2">
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Total Piutang</div><div class="kpi-val" style="color:var(--blue-d)">Rp 83,6M</div><div class="kpi-sub">14 invoice terbuka</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--grn)"></div><div class="kpi-lbl">Belum Jatuh Tempo</div><div class="kpi-val" style="color:var(--grn-d)">Rp 71,1M</div><div class="kpi-sub up">85% dari total</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amb)"></div><div class="kpi-lbl">Lewat 30–60 hari</div><div class="kpi-val" style="color:var(--amb-d)">Rp 8,5M</div><div class="kpi-sub w">2 pelanggan</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Lewat &gt;60 hari</div><div class="kpi-val" style="color:var(--red-d)">Rp 4,0M</div><div class="kpi-sub dn">1 pelanggan kritis</div></div>
+  </div>
+  <div class="card sec-finance">
+    <div class="ch"><span class="ct"><i class="ti ti-receipt" style="color:var(--blue)"></i>Aging Piutang</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Pelanggan</th><th>Faktur</th><th>Tgl Invoice</th><th>Jatuh Tempo</th><th>Jumlah</th><th>Umur</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:500">PT Maju Bersama</td><td><button class="btn-link" onclick="openTxPanel('INV-2042')">INV-2042</button></td><td>28 Jun 26</td><td>28 Jul 26</td><td style="font-weight:600">Rp 55.000.000</td><td><span class="tag tg">Lancar</span></td><td><span class="tag tb">Terbuka</span></td><td><button class="btn btn-ghost btn-xs" onclick="toast('Reminder dikirim ke PT Maju Bersama','success')">Kirim reminder</button></td></tr>
+        <tr><td style="font-weight:500">CV Digital Nusantara</td><td><button class="btn-link" onclick="openTxPanel('INV-2041')">INV-2041</button></td><td>25 Jun 26</td><td>25 Jul 26</td><td style="font-weight:600">Rp 28.600.000</td><td><span class="tag tg">Lancar</span></td><td><span class="tag tb">Terbuka</span></td><td><button class="btn btn-ghost btn-xs" onclick="toast('Reminder dikirim','success')">Kirim reminder</button></td></tr>
+        <tr><td style="font-weight:500">PT Karya Mandiri</td><td><button class="btn-link" onclick="openTxPanel('INV-2035')">INV-2035</button></td><td>28 Mei 26</td><td>28 Jun 26</td><td style="font-weight:600">Rp 8.500.000</td><td><span class="tag ta">31 hari</span></td><td><span class="tag ta">Terlambat</span></td><td><button class="btn btn-ghost btn-xs" onclick="toast('Eskalasi dikirim','info')">Eskalasi</button></td></tr>
+        <tr><td style="font-weight:500">UD Sejahtera</td><td><button class="btn-link" onclick="openTxPanel('INV-2020')">INV-2020</button></td><td>18 Apr 26</td><td>18 Mei 26</td><td style="font-weight:600">Rp 4.000.000</td><td><span class="tag tr">71 hari</span></td><td><span class="tag tr">Kritis</span></td><td><button class="btn btn-red btn-xs" onclick="toast('Dikirim ke tim legal','info')">Legal</button></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ FINANCE: A/P ══ -->
+<div id="pg-ap" class="page">
+  <div class="g4 mb2">
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Total Hutang</div><div class="kpi-val" style="color:var(--red-d)">Rp 34,2M</div><div class="kpi-sub">8 tagihan terbuka</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amb)"></div><div class="kpi-lbl">Jatuh Tempo Minggu Ini</div><div class="kpi-val" style="color:var(--amb-d)">Rp 8,2M</div><div class="kpi-sub w">2 vendor mendesak</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Jatuh Tempo Bulan Ini</div><div class="kpi-val" style="color:var(--blue-d)">Rp 26,0M</div><div class="kpi-sub">6 vendor</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--grn)"></div><div class="kpi-lbl">Terlambat</div><div class="kpi-val" style="color:var(--grn-d)">Rp 0</div><div class="kpi-sub up">Tidak ada keterlambatan</div></div>
+  </div>
+  <div class="card sec-finance">
+    <div class="ch"><span class="ct"><i class="ti ti-credit-card" style="color:var(--blue)"></i>Jadwal Pembayaran</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Vendor</th><th>No. Tagihan</th><th>Tgl Tagihan</th><th>Jatuh Tempo</th><th>DPP</th><th>PPN</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:500">PT Sumber Makmur</td><td>BILL-0455</td><td>20 Jun 26</td><td style="color:var(--red-d);font-weight:600">30 Jun 26</td><td>Rp 7.432.432</td><td>Rp 817.568</td><td style="font-weight:600">Rp 8.250.000</td><td><span class="tag tr">Mendesak</span></td><td><button class="btn btn-grn btn-xs" onclick="toast('Pembayaran Rp 8,25M dijadwalkan','success')">Bayar</button></td></tr>
+        <tr><td style="font-weight:500">PT Listrik Nusantara</td><td>BILL-0440</td><td>1 Jun 26</td><td>15 Jul 26</td><td>Rp 3.153.153</td><td>Rp 346.847</td><td style="font-weight:600">Rp 3.500.000</td><td><span class="tag tb">Terbuka</span></td><td><button class="btn btn-ghost btn-xs" onclick="toast('Dijadwalkan 14 Jul','success')">Jadwalkan</button></td></tr>
+        <tr><td style="font-weight:500">Telkom Indonesia</td><td>BILL-0441</td><td>1 Jun 26</td><td>20 Jul 26</td><td>Rp 1.200.000</td><td>—</td><td style="font-weight:600">Rp 1.200.000</td><td><span class="tag tb">Terbuka</span></td><td><button class="btn btn-ghost btn-xs" onclick="toast('Dijadwalkan 19 Jul','success')">Jadwalkan</button></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ FINANCE: ARUS KAS ══ -->
+<div id="pg-cashflow" class="page">
+  <div class="g4 mb2">
+    <div class="kpi"><div class="kpi-bar" style="background:var(--grn)"></div><div class="kpi-lbl">Arus Kas Operasional</div><div class="kpi-val" style="color:var(--grn-d)">+Rp 156,3M</div><div class="kpi-sub up">+22% YoY</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Arus Kas Investasi</div><div class="kpi-val" style="color:var(--red-d)">-Rp 24,0M</div><div class="kpi-sub">Pembelian aset</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Arus Kas Pendanaan</div><div class="kpi-val" style="color:var(--red-d)">-Rp 10,0M</div><div class="kpi-sub">Cicilan pinjaman</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Saldo Kas Bersih</div><div class="kpi-val" style="color:var(--blue-d)">Rp 122,3M</div><div class="kpi-sub up">Saldo bank</div></div>
+  </div>
+  <div class="card sec-finance">
+    <div class="ch"><span class="ct"><i class="ti ti-cash" style="color:var(--blue)"></i>Laporan Arus Kas — Juni 2026</span><button class="btn btn-ghost btn-sm" onclick="toast('Arus kas diekspor','success')"><i class="ti ti-download"></i>Export</button></div>
+    <div class="tw"><table>
+      <thead><tr><th>Kelompok</th><th>Keterangan</th><th>Jumlah (Rp)</th></tr></thead>
+      <tbody>
+        <tr style="background:var(--grn-bg)"><td colspan="3" style="font-weight:700;color:#065f46;padding:10px 14px">A. Aktivitas Operasi</td></tr>
+        <tr><td style="padding-left:24px">Penerimaan</td><td>Penagihan dari pelanggan</td><td style="color:var(--grn-d);font-weight:600">+201.500.000</td></tr>
+        <tr><td style="padding-left:24px">Pembayaran</td><td>Ke vendor dan supplier</td><td style="color:var(--red-d)">-35.200.000</td></tr>
+        <tr><td style="padding-left:24px">Pembayaran</td><td>Gaji karyawan</td><td style="color:var(--red-d)">-45.000.000</td></tr>
+        <tr><td style="padding-left:24px">Pembayaran</td><td>Pajak (PPN + PPh)</td><td style="color:var(--red-d)">-15.000.000</td></tr>
+        <tr style="background:var(--grn-bg)"><td colspan="2" style="font-weight:700;padding-left:14px">Net Arus Kas Operasi</td><td style="font-weight:700;color:var(--grn-d)">+156.300.000</td></tr>
+        <tr style="background:var(--red-bg)"><td colspan="3" style="font-weight:700;color:#991b1b;padding:10px 14px">B. Aktivitas Investasi</td></tr>
+        <tr><td style="padding-left:24px">Pembayaran</td><td>Beli server dan peralatan</td><td style="color:var(--red-d)">-24.000.000</td></tr>
+        <tr style="background:var(--blue-bg)"><td colspan="2" style="font-weight:700;font-size:14px">Net Perubahan Kas</td><td style="font-weight:700;color:var(--blue-d);font-size:14px">+122.300.000</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ AKUNTANSI: JURNAL ══ -->
+<div id="pg-journal" class="page">
+  <div class="card sec-accounting mb">
+    <div class="ch"><span class="ct"><i class="ti ti-notebook" style="color:var(--pur-d)"></i>Jurnal Entries</span>
+      <div style="display:flex;gap:8px"><input type="text" placeholder="Cari ref atau keterangan..." style="width:200px;padding:5px 10px;font-size:12.5px"><button class="btn btn-blue btn-sm" onclick="toast('Form jurnal manual siap','info')"><i class="ti ti-plus"></i>Entry Manual</button></div>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Ref</th><th>Tanggal</th><th>Keterangan</th><th>Debit</th><th>Kredit</th><th>Akun</th><th>Sumber</th><th></th></tr></thead>
+      <tbody id="jrn-tb"></tbody>
+    </table></div>
+  </div>
+  <div class="g3">
+    <div class="kpi"><div class="kpi-lbl">Total Debit</div><div class="kpi-val" style="color:var(--blue-d);font-size:18px" id="tot-dr">Rp 0</div></div>
+    <div class="kpi"><div class="kpi-lbl">Total Kredit</div><div class="kpi-val" style="color:var(--grn-d);font-size:18px" id="tot-cr">Rp 0</div></div>
+    <div class="kpi"><div class="kpi-lbl">Cek Saldo</div><div class="kpi-val" style="font-size:18px" id="bal-st">—</div></div>
+  </div>
+</div>
+
+<!-- ══ AKUNTANSI: BUKU BESAR ══ -->
+<div id="pg-ledger" class="page">
+  <div class="card sec-accounting">
+    <div class="ch"><span class="ct"><i class="ti ti-book" style="color:var(--pur-d)"></i>Buku Besar (General Ledger)</span>
+      <select style="padding:5px 9px;border:1.5px solid var(--bd);border-radius:7px;font-size:12.5px;background:var(--surf)" onchange="filterLedger(this.value)">
+        <option value="all">Semua Akun</option><option value="1100">1100 — Piutang</option><option value="2100">2100 — Hutang</option><option value="4000">4000 — Pendapatan</option><option value="6100">6100 — Biaya Kantor</option><option value="2300">2300 — PPN Keluaran</option>
+      </select>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Tanggal</th><th>Ref</th><th>Keterangan</th><th>Debit</th><th>Kredit</th><th>Saldo</th><th>Akun</th></tr></thead>
+      <tbody id="ldg-tb"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ AKUNTANSI: DAFTAR AKUN ══ -->
+<div id="pg-coa" class="page">
+  <div class="card sec-accounting">
+    <div class="ch"><span class="ct"><i class="ti ti-list-numbers" style="color:var(--pur-d)"></i>Daftar Akun (Chart of Accounts)</span><button class="btn btn-blue btn-sm" onclick="toast('Form akun baru siap','info')"><i class="ti ti-plus"></i>Tambah Akun</button></div>
+    <div class="tw"><table>
+      <thead><tr><th>Kode</th><th>Nama Akun</th><th>Tipe</th><th>Kategori</th><th>Saldo Normal</th><th>Saldo (Rp)</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:monospace;font-weight:700">1000</td><td>Kas dan Bank</td><td><span class="tag tb">Aset</span></td><td>Aset Lancar</td><td>Debit</td><td style="color:var(--grn-d);font-weight:600">122.300.000</td></tr>
+        <tr><td style="font-family:monospace;font-weight:700">1100</td><td>Piutang Usaha</td><td><span class="tag tb">Aset</span></td><td>Aset Lancar</td><td>Debit</td><td style="color:var(--grn-d);font-weight:600">83.600.000</td></tr>
+        <tr><td style="font-family:monospace;font-weight:700">1300</td><td>PPN Masukan</td><td><span class="tag tb">Aset</span></td><td>Aset Pajak</td><td>Debit</td><td style="color:var(--grn-d);font-weight:600">1.482.883</td></tr>
+        <tr><td style="font-family:monospace;font-weight:700">1500</td><td>Aset Tetap</td><td><span class="tag tb">Aset</span></td><td>Aset Tidak Lancar</td><td>Debit</td><td style="color:var(--grn-d);font-weight:600">48.000.000</td></tr>
+        <tr><td style="font-family:monospace;font-weight:700">2100</td><td>Hutang Usaha</td><td><span class="tag tr">Kewajiban</span></td><td>Kewajiban Lancar</td><td>Kredit</td><td style="color:var(--red-d);font-weight:600">34.200.000</td></tr>
+        <tr><td style="font-family:monospace;font-weight:700">2300</td><td>PPN Keluaran</td><td><span class="tag tr">Kewajiban</span></td><td>Kewajiban Pajak</td><td>Kredit</td><td style="color:var(--red-d);font-weight:600">28.150.450</td></tr>
+        <tr><td style="font-family:monospace;font-weight:700">2400</td><td>PPh Terutang</td><td><span class="tag tr">Kewajiban</span></td><td>Kewajiban Pajak</td><td>Kredit</td><td style="color:var(--red-d);font-weight:600">2.250.000</td></tr>
+        <tr><td style="font-family:monospace;font-weight:700">3000</td><td>Modal Usaha</td><td><span class="tag tp">Ekuitas</span></td><td>Ekuitas</td><td>Kredit</td><td style="color:var(--pur-d);font-weight:600">200.000.000</td></tr>
+        <tr><td style="font-family:monospace;font-weight:700">4000</td><td>Pendapatan Penjualan</td><td><span class="tag tg">Pendapatan</span></td><td>Pendapatan</td><td>Kredit</td><td style="color:var(--grn-d);font-weight:600">284.500.000</td></tr>
+        <tr><td style="font-family:monospace;font-weight:700">5000</td><td>Harga Pokok Penjualan</td><td><span class="tag ta">Beban</span></td><td>HPP</td><td>Debit</td><td style="color:var(--red-d);font-weight:600">95.000.000</td></tr>
+        <tr><td style="font-family:monospace;font-weight:700">5100</td><td>Beban Gaji</td><td><span class="tag ta">Beban</span></td><td>Operasional</td><td>Debit</td><td style="color:var(--red-d);font-weight:600">45.000.000</td></tr>
+        <tr><td style="font-family:monospace;font-weight:700">6100</td><td>Beban Kantor</td><td><span class="tag ta">Beban</span></td><td>Operasional</td><td>Debit</td><td style="color:var(--red-d);font-weight:600">2.800.000</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ AKUNTANSI: NERACA SALDO ══ -->
+<div id="pg-trialbal" class="page">
+  <div class="card sec-accounting">
+    <div class="ch"><span class="ct"><i class="ti ti-scale" style="color:var(--pur-d)"></i>Neraca Saldo — Juni 2026</span><span class="tag tg"><i class="ti ti-check" style="font-size:11px"></i>Seimbang</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Kode</th><th>Nama Akun</th><th>Debit (Rp)</th><th>Kredit (Rp)</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:monospace">1000</td><td>Kas dan Bank</td><td style="color:var(--blue-d)">122.300.000</td><td style="color:var(--ink3)">—</td></tr>
+        <tr><td style="font-family:monospace">1100</td><td>Piutang Usaha</td><td style="color:var(--blue-d)">83.600.000</td><td style="color:var(--ink3)">—</td></tr>
+        <tr><td style="font-family:monospace">1300</td><td>PPN Masukan</td><td style="color:var(--blue-d)">1.482.883</td><td style="color:var(--ink3)">—</td></tr>
+        <tr><td style="font-family:monospace">2100</td><td>Hutang Usaha</td><td style="color:var(--ink3)">—</td><td style="color:var(--grn-d)">34.200.000</td></tr>
+        <tr><td style="font-family:monospace">2300</td><td>PPN Keluaran</td><td style="color:var(--ink3)">—</td><td style="color:var(--grn-d)">28.150.450</td></tr>
+        <tr><td style="font-family:monospace">2400</td><td>PPh Terutang</td><td style="color:var(--ink3)">—</td><td style="color:var(--grn-d)">2.250.000</td></tr>
+        <tr><td style="font-family:monospace">3000</td><td>Modal Usaha</td><td style="color:var(--ink3)">—</td><td style="color:var(--grn-d)">200.000.000</td></tr>
+        <tr><td style="font-family:monospace">4000</td><td>Pendapatan Penjualan</td><td style="color:var(--ink3)">—</td><td style="color:var(--grn-d)">284.500.000</td></tr>
+        <tr><td style="font-family:monospace">5000</td><td>HPP</td><td style="color:var(--blue-d)">95.000.000</td><td style="color:var(--ink3)">—</td></tr>
+        <tr><td style="font-family:monospace">5100</td><td>Beban Gaji</td><td style="color:var(--blue-d)">45.000.000</td><td style="color:var(--ink3)">—</td></tr>
+        <tr><td style="font-family:monospace">6100</td><td>Beban Kantor</td><td style="color:var(--blue-d)">2.800.000</td><td style="color:var(--ink3)">—</td></tr>
+        <tr style="background:var(--surf3)"><td colspan="2" style="font-weight:700">TOTAL</td><td style="font-weight:700;color:var(--blue-d)">350.182.883</td><td style="font-weight:700;color:var(--grn-d)">549.100.450</td></tr>
+        <tr style="background:var(--grn-bg)"><td colspan="2" style="font-weight:700;color:#065f46">Laba Bersih (balancing)</td><td style="color:var(--ink3)">—</td><td style="font-weight:700;color:var(--grn-d)">141.700.000</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ AKUNTANSI: LAPORAN KEUANGAN ══ -->
+<div id="pg-finreport" class="page">
+  <div class="g3 mb2">
+    <div class="card" style="cursor:pointer" onclick="toast('Laporan L/R diekspor ke Excel','success')"><div class="cb" style="text-align:center;padding:24px"><i class="ti ti-chart-line" style="font-size:32px;color:var(--blue);display:block;margin-bottom:8px"></i><div style="font-weight:600">Laba Rugi</div><div style="font-size:12px;color:var(--ink3)">Income Statement</div></div></div>
+    <div class="card" style="cursor:pointer" onclick="toast('Neraca diekspor','success')"><div class="cb" style="text-align:center;padding:24px"><i class="ti ti-scale" style="font-size:32px;color:var(--grn-d);display:block;margin-bottom:8px"></i><div style="font-weight:600">Neraca</div><div style="font-size:12px;color:var(--ink3)">Balance Sheet</div></div></div>
+    <div class="card" style="cursor:pointer" onclick="goOp('cashflow',null)"><div class="cb" style="text-align:center;padding:24px"><i class="ti ti-cash" style="font-size:32px;color:var(--pur-d);display:block;margin-bottom:8px"></i><div style="font-weight:600">Arus Kas</div><div style="font-size:12px;color:var(--ink3)">Cash Flow</div></div></div>
+  </div>
+  <div class="g2">
+    <div class="card sec-accounting"><div class="ch"><span class="ct"><i class="ti ti-chart-line" style="color:var(--pur-d)"></i>Laporan Laba Rugi — Juni 2026</span></div>
+      <div class="tw"><table><thead><tr><th>Kategori</th><th>Kode</th><th>Jumlah (Rp)</th></tr></thead><tbody>
+        <tr style="background:var(--grn-bg)"><td colspan="3" style="font-weight:700;color:#065f46">Pendapatan</td></tr>
+        <tr><td style="padding-left:20px">Penjualan</td><td style="font-family:monospace">4000</td><td style="color:var(--grn-d)">284.500.000</td></tr>
+        <tr style="background:var(--grn-bg)"><td colspan="2" style="font-weight:700">Total Pendapatan</td><td style="font-weight:700;color:var(--grn-d)">284.500.000</td></tr>
+        <tr style="background:var(--red-bg)"><td colspan="3" style="font-weight:700;color:#991b1b">Beban</td></tr>
+        <tr><td style="padding-left:20px">HPP</td><td style="font-family:monospace">5000</td><td style="color:var(--red-d)">95.000.000</td></tr>
+        <tr><td style="padding-left:20px">Gaji</td><td style="font-family:monospace">5100</td><td style="color:var(--red-d)">45.000.000</td></tr>
+        <tr><td style="padding-left:20px">Biaya Kantor</td><td style="font-family:monospace">6100</td><td style="color:var(--red-d)">2.800.000</td></tr>
+        <tr style="background:var(--red-bg)"><td colspan="2" style="font-weight:700">Total Beban</td><td style="font-weight:700;color:var(--red-d)">142.800.000</td></tr>
+        <tr style="background:var(--blue-bg)"><td colspan="2" style="font-weight:800;font-size:14px;color:var(--blue-d)">Laba Bersih</td><td style="font-weight:800;font-size:14px;color:var(--blue-d)">141.700.000</td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="card sec-accounting"><div class="ch"><span class="ct"><i class="ti ti-scale" style="color:var(--pur-d)"></i>Neraca — Juni 2026</span></div>
+      <div class="tw"><table><thead><tr><th>Kategori</th><th>Kode</th><th>Jumlah (Rp)</th></tr></thead><tbody>
+        <tr style="background:var(--blue-bg)"><td colspan="3" style="font-weight:700;color:#1e40af">Aset</td></tr>
+        <tr><td style="padding-left:20px">Kas dan Bank</td><td style="font-family:monospace">1000</td><td style="color:var(--grn-d)">122.300.000</td></tr>
+        <tr><td style="padding-left:20px">Piutang Usaha</td><td style="font-family:monospace">1100</td><td style="color:var(--grn-d)">83.600.000</td></tr>
+        <tr><td style="padding-left:20px">Aset Tetap</td><td style="font-family:monospace">1500</td><td style="color:var(--grn-d)">48.000.000</td></tr>
+        <tr style="background:var(--blue-bg)"><td colspan="2" style="font-weight:700">Total Aset</td><td style="font-weight:700;color:var(--blue-d)">253.900.000</td></tr>
+        <tr style="background:var(--red-bg)"><td colspan="3" style="font-weight:700;color:#991b1b">Kewajiban dan Ekuitas</td></tr>
+        <tr><td style="padding-left:20px">Hutang Usaha</td><td style="font-family:monospace">2100</td><td style="color:var(--red-d)">34.200.000</td></tr>
+        <tr><td style="padding-left:20px">Pajak Terutang</td><td style="font-family:monospace">2300</td><td style="color:var(--red-d)">28.150.450</td></tr>
+        <tr><td style="padding-left:20px">Modal + Laba</td><td style="font-family:monospace">3000</td><td style="color:var(--pur-d)">191.549.550</td></tr>
+        <tr style="background:var(--red-bg)"><td colspan="2" style="font-weight:700">Total K + E</td><td style="font-weight:700;color:var(--blue-d)">253.900.000</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAJAK: RINGKASAN ══ -->
+<div id="pg-taxsum" class="page">
+  <div class="g4 mb2">
+    <div class="kpi"><div class="kpi-bar" style="background:var(--grn)"></div><div class="kpi-lbl">PPN Keluaran</div><div class="kpi-val" style="color:var(--grn-d)" id="ppn-out">Rp 0</div><div class="kpi-sub">Dari penjualan</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">PPN Masukan</div><div class="kpi-val" style="color:var(--red-d)" id="ppn-in">Rp 0</div><div class="kpi-sub">Dari pembelian</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--teal)"></div><div class="kpi-lbl">PPN Kurang Bayar</div><div class="kpi-val" style="color:var(--teal-d)" id="ppn-net">Rp 0</div><div class="kpi-sub w">Due 31 Jul 2026</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amb)"></div><div class="kpi-lbl">PPh Dipotong</div><div class="kpi-val" style="color:var(--amb-d)" id="pph-amt">Rp 0</div><div class="kpi-sub">Auto-deducted</div></div>
+  </div>
+  <div class="g2">
+    <div class="card sec-tax"><div class="ch"><span class="ct"><i class="ti ti-receipt-tax" style="color:var(--teal-d)"></i>Transaksi PPN</span><button class="btn-link btn-sm" onclick="goOp('ppn',null)">Lihat SPT →</button></div><div id="ppn-list" style="padding:0 18px"><div style="text-align:center;padding:24px;color:var(--ink3)">Posting invoice untuk mengisi otomatis</div></div></div>
+    <div class="card sec-tax"><div class="ch"><span class="ct"><i class="ti ti-percentage" style="color:var(--teal-d)"></i>PPh Withholding</span><button class="btn-link btn-sm" onclick="goOp('pph',null)">Lihat detail →</button></div><div id="pph-list" style="padding:0 18px"><div style="text-align:center;padding:24px;color:var(--ink3)">Belum ada entri PPh</div></div></div>
+  </div>
+</div>
+
+<!-- ══ PAJAK: SPT PPN ══ -->
+<div id="pg-ppn" class="page">
+  <div class="card sec-tax mb">
+    <div class="ch"><span class="ct"><i class="ti ti-file-text" style="color:var(--teal-d)"></i>SPT Masa PPN — Juni 2026</span><div style="display:flex;gap:8px"><span class="tag ta">Due 31 Jul 2026</span><button class="btn btn-blue btn-sm" onclick="toast('SPT PPN digenerate siap e-filing','success')"><i class="ti ti-file-export"></i>Generate SPT</button></div></div>
+    <div class="cb">
+      <div class="g2 mb">
+        <div><div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;margin-bottom:10px">Pajak Keluaran (Output)</div>
+          <table><thead><tr><th>Faktur</th><th>Lawan Transaksi</th><th>DPP</th><th>PPN 11%</th></tr></thead><tbody>
+            <tr><td>INV-2042</td><td>PT Maju Bersama</td><td>49.549.550</td><td style="color:var(--grn-d);font-weight:600">5.450.450</td></tr>
+            <tr><td>INV-2041</td><td>CV Digital Nusantara</td><td>25.765.765</td><td style="color:var(--grn-d);font-weight:600">2.834.235</td></tr>
+            <tr style="background:var(--grn-bg)"><td colspan="3" style="font-weight:700">Subtotal Keluaran</td><td style="font-weight:700;color:var(--grn-d)">8.284.685</td></tr>
+          </tbody></table>
+        </div>
+        <div><div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;margin-bottom:10px">Pajak Masukan (Input)</div>
+          <table><thead><tr><th>Faktur</th><th>Supplier</th><th>DPP</th><th>PPN 11%</th></tr></thead><tbody>
+            <tr><td>EXP-0521</td><td>Tokopedia</td><td>2.117.117</td><td style="color:var(--red-d)">232.883</td></tr>
+            <tr><td>BILL-0455</td><td>PT Sumber Makmur</td><td>7.432.432</td><td style="color:var(--red-d)">817.568</td></tr>
+            <tr style="background:var(--red-bg)"><td colspan="3" style="font-weight:700">Subtotal Masukan</td><td style="font-weight:700;color:var(--red-d)">1.050.451</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div class="card" style="background:var(--blue-bg);border-color:var(--blue-t)"><div class="cb" style="padding:14px">
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--blue-t);font-size:13.5px"><span>PPN Keluaran</span><span style="font-weight:700;color:var(--grn-d)">Rp 8.284.685</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--blue-t);font-size:13.5px"><span>PPN Masukan</span><span style="font-weight:700;color:var(--red-d)">Rp 1.050.451</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:15px"><span style="font-weight:700">PPN Kurang Bayar</span><span style="font-weight:800;color:var(--blue-d)">Rp 7.234.234</span></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAJAK: PPH ══ -->
+<div id="pg-pph" class="page">
+  <div class="card sec-tax">
+    <div class="ch"><span class="ct"><i class="ti ti-coin" style="color:var(--teal-d)"></i>PPh Withholding — Detail</span><button class="btn btn-blue btn-sm" onclick="toast('Bukti Potong digenerate','success')"><i class="ti ti-file-export"></i>Bukti Potong</button></div>
+    <div class="tw"><table>
+      <thead><tr><th>Ref</th><th>Tanggal</th><th>Penerima</th><th>NPWP</th><th>Jenis</th><th>Bruto</th><th>Tarif</th><th>PPh Dipotong</th><th>Net Dibayar</th></tr></thead>
+      <tbody>
+        <tr><td>PAY-0218</td><td>26 Jun 26</td><td>14 Karyawan</td><td>various</td><td><span class="tag ta">PPh 21</span></td><td>45.000.000</td><td>5%</td><td style="color:var(--red-d);font-weight:600">2.250.000</td><td style="font-weight:600">42.750.000</td></tr>
+        <tr><td colspan="9" style="text-align:center;color:var(--ink3);padding:16px">Post invoice jasa dengan PPh 23 untuk menambah entri</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ PAJAK: KALENDER ══ -->
+<div id="pg-taxcal" class="page">
+  <div class="card sec-tax">
+    <div class="ch"><span class="ct"><i class="ti ti-calendar-event" style="color:var(--teal-d)"></i>Kalender Pajak Indonesia — 2026</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Deadline</th><th>Jenis Pajak</th><th>Masa/Periode</th><th>Kewajiban</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--red-d);font-weight:700">20 Jul 2026</td><td><span class="tag ta">PPh 21</span></td><td>Juni 2026</td><td>Penyetoran PPh 21 masa Juni</td><td><span class="tag tr">Mendesak</span></td><td><button class="btn btn-blue btn-xs" onclick="toast('SSP PPh 21 disiapkan','success')">Siapkan SSP</button></td></tr>
+        <tr><td style="color:var(--amb-d);font-weight:700">31 Jul 2026</td><td><span class="tag tp">PPN</span></td><td>Juni 2026</td><td>Lapor dan setor SPT Masa PPN</td><td><span class="tag ta">Segera</span></td><td><button class="btn btn-ghost btn-xs" onclick="goOp('ppn',null)">Lihat SPT →</button></td></tr>
+        <tr><td>20 Agt 2026</td><td><span class="tag ta">PPh 21</span></td><td>Juli 2026</td><td>Penyetoran PPh 21 masa Juli</td><td><span class="tag tgr">Mendatang</span></td><td>—</td></tr>
+        <tr><td>31 Agt 2026</td><td><span class="tag tp">PPN</span></td><td>Juli 2026</td><td>SPT Masa PPN Juli</td><td><span class="tag tgr">Mendatang</span></td><td>—</td></tr>
+        <tr><td>31 Okt 2026</td><td><span class="tag tr">PPh 25</span></td><td>Q3 2026</td><td>Angsuran PPh 25 Badan</td><td><span class="tag tgr">Mendatang</span></td><td>—</td></tr>
+        <tr><td>30 Apr 2027</td><td><span class="tag tr">PPh Badan</span></td><td>FY 2026</td><td>SPT Tahunan PPh Badan</td><td><span class="tag tgr">Tahunan</span></td><td>—</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ KLIEN: SEMUA KLIEN ══ -->
+<div id="pg-clients" class="page">
+  <div class="card sec-clients">
+    <div class="ch"><span class="ct"><i class="ti ti-users" style="color:var(--grn-d)"></i>Semua Klien</span>
+      <div style="display:flex;gap:8px">
+        <select style="padding:5px 9px;border:1.5px solid var(--bd);border-radius:7px;font-size:12.5px;background:var(--surf)"><option>Semua paket</option><option>Starter</option><option>Bisnis</option><option>Pro</option></select>
+        <button class="btn btn-blue btn-sm" onclick="goOp('onboard',null)"><i class="ti ti-plus"></i>Tambah Klien</button>
+      </div>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Klien</th><th>Jenis Usaha</th><th>Paket</th><th>NPWP</th><th>Bergabung</th><th>Tagihan</th><th>Dokumen</th><th>Status</th><th></th></tr></thead>
+      <tbody id="clients-tb"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ KLIEN: ONBOARDING ══ -->
+<div id="pg-onboard" class="page">
+  <div class="g2">
+    <div class="card sec-clients mb">
+      <div class="ch"><span class="ct"><i class="ti ti-user-plus" style="color:var(--grn-d)"></i>Form Onboarding Klien Baru</span></div>
+      <div class="cb">
+        <div class="fg"><div class="fl">Nama usaha / perusahaan</div><input type="text" id="ob-name" placeholder="Toko Maju / CV Berkah / PT Indonesia"></div>
+        <div class="g2" style="gap:10px">
+          <div class="fg"><div class="fl">Jenis usaha</div><select id="ob-type"><option>Perdagangan / Toko</option><option>Restoran / F&B</option><option>Jasa / Konsultan</option><option>Manufaktur</option><option>E-commerce</option><option>Lainnya</option></select></div>
+          <div class="fg"><div class="fl">Badan hukum</div><select id="ob-legal"><option>Perorangan / Warung</option><option>CV</option><option>PT</option><option>Koperasi</option></select></div>
+        </div>
+        <div class="fg"><div class="fl">NPWP (jika ada)</div><input type="text" id="ob-npwp" placeholder="XX.XXX.XXX.X-XXX.XXX"></div>
+        <div class="fg"><div class="fl">Status PKP</div><select id="ob-pkp"><option>Non-PKP</option><option>PKP (sudah terdaftar)</option></select></div>
+        <div style="border-top:1px solid var(--bd);padding-top:14px;margin-top:4px">
+          <div class="fg"><div class="fl">Nama PIC</div><input type="text" id="ob-pic" placeholder="Nama penanggung jawab"></div>
+          <div class="g2" style="gap:10px">
+            <div class="fg"><div class="fl">WhatsApp</div><input type="text" id="ob-wa" placeholder="081234567890"></div>
+            <div class="fg"><div class="fl">Email</div><input type="email" id="ob-email" placeholder="email@usaha.com"></div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--bd);padding-top:14px;margin-top:4px">
+          <div class="fg"><div class="fl">Paket layanan</div>
+            <select id="ob-plan">
+              <option value="starter">Starter — Rp 299.000/bln (maks 30 dok)</option>
+              <option value="bisnis" selected>Bisnis — Rp 799.000/bln (maks 150 dok)</option>
+              <option value="pro">Pro — Rp 2.500.000/bln (unlimited)</option>
+            </select>
+          </div>
+          <div class="fg"><div class="fl">Tanggal mulai</div><input type="date" id="ob-start" value="2026-07-01"></div>
+          <div class="fg"><div class="fl">Catatan khusus</div><textarea id="ob-note" rows="2" style="resize:none" placeholder="Transaksi cash dominan, belum ada pembukuan, dll..."></textarea></div>
+        </div>
+        <button class="btn btn-grn" style="width:100%;justify-content:center;padding:11px" onclick="addClient()"><i class="ti ti-user-check"></i>Daftarkan & Kirim Welcome Kit</button>
+      </div>
+    </div>
+    <div>
+      <div class="card sec-clients mb">
+        <div class="ch"><span class="ct"><i class="ti ti-checklist" style="color:var(--grn-d)"></i>Checklist Onboarding</span></div>
+        <div class="cb" style="padding:12px 18px">
+          <div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);font-size:13px"><i class="ti ti-circle-check" style="color:var(--grn);font-size:16px"></i>Form data klien lengkap</div>
+          <div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);font-size:13px"><i class="ti ti-circle-check" style="color:var(--grn);font-size:16px"></i>Paket dipilih dan invoice pertama dibuat</div>
+          <div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);font-size:13px"><i class="ti ti-circle-dashed" style="color:var(--ink3);font-size:16px"></i>MOU / perjanjian layanan ditandatangani</div>
+          <div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);font-size:13px"><i class="ti ti-circle-dashed" style="color:var(--ink3);font-size:16px"></i>Akun portal klien dikirim via email/WA</div>
+          <div style="display:flex;gap:10px;align-items:center;padding:8px 0;font-size:13px"><i class="ti ti-circle-dashed" style="color:var(--ink3);font-size:16px"></i>Histori dokumen bulan lalu diminta</div>
+        </div>
+      </div>
+      <div class="card sec-clients">
+        <div class="ch"><span class="ct"><i class="ti ti-message" style="color:var(--grn-d)"></i>Preview WhatsApp Welcome</span></div>
+        <div class="cb" style="padding:14px">
+          <div class="wa-box">
+            <div class="wa-msg wa-out">Selamat bergabung dengan FinTrack Pro! 🎉<br><br>Halo <b id="wa-nm">Klien Baru</b>, akun Anda sudah aktif untuk paket <b id="wa-pk">Bisnis</b>.<br><br>Cara kirim dokumen:<br>1️⃣ Foto nota/invoice/struk<br>2️⃣ Kirim ke nomor ini<br>3️⃣ Tulis keterangan singkat<br><br>Laporan dikirim setiap tgl 20. Chat di sini untuk pertanyaan 😊<div class="wa-time">Sekarang ✓✓</div></div>
+            <div class="wa-msg wa-in">Halo, ini foto nota hari ini 📄<div class="wa-time">—</div></div>
+            <div class="wa-msg wa-out">Terima kasih! Sedang diproses AI kami. Selesai dalam 2 jam kerja 👍<div class="wa-time">— ✓✓</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ KLIEN: DOKUMEN MASUK ══ -->
+<div id="pg-docsqueue" class="page">
+  <div class="g2">
+    <div class="card sec-clients">
+      <div class="ch"><span class="ct"><i class="ti ti-inbox" style="color:var(--grn-d)"></i>Antrian Dokumen Masuk</span><span class="tag ta">8 pending</span></div>
+      <div class="tw"><table>
+        <thead><tr><th>Klien</th><th>Tipe Dok.</th><th>Diterima</th><th>Via</th><th>Status AI</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <tr><td>Toko Maju Jaya</td><td>Invoice supplier</td><td>09:14</td><td><span class="tag tgr" style="font-size:10.5px">WhatsApp</span></td><td><span class="tag tg" style="font-size:10.5px">Selesai 97%</span></td><td><div style="display:flex;gap:5px"><button class="btn btn-ghost btn-xs" onclick="goOp('review',null)"><i class="ti ti-eye"></i>Review</button></div></td></tr>
+          <tr><td>CV Berkah Jaya</td><td>Struk belanja</td><td>09:31</td><td><span class="tag tb" style="font-size:10.5px">Portal</span></td><td><span class="tag tg" style="font-size:10.5px">Selesai 95%</span></td><td><div style="display:flex;gap:5px"><button class="btn btn-ghost btn-xs" onclick="goOp('review',null)"><i class="ti ti-eye"></i>Review</button></div></td></tr>
+          <tr><td>Warung Bu Sri</td><td>Nota tangan</td><td>10:05</td><td><span class="tag tgr" style="font-size:10.5px">WhatsApp</span></td><td><span class="tag tr" style="font-size:10.5px">Review — 42%</span></td><td><div style="display:flex;gap:5px"><button class="btn btn-ghost btn-xs" onclick="toast('Klarifikasi WA dikirim','info')"><i class="ti ti-message"></i>Klarifikasi</button></div></td></tr>
+          <tr><td>PT Teknologi Maju</td><td>Invoice USD</td><td>10:22</td><td><span class="tag ta" style="font-size:10.5px">Email</span></td><td><span class="tag tb" style="font-size:10.5px">Proses...</span></td><td>—</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="card sec-clients">
+      <div class="ch"><span class="ct"><i class="ti ti-scan" style="color:var(--grn-d)"></i>Proses Manual</span></div>
+      <div class="cb">
+        <div class="upz" onclick="toast('Pilih file dokumen klien','info')" style="margin-bottom:14px">
+          <i class="ti ti-cloud-upload" style="color:var(--grn-d)"></i>
+          <div style="font-weight:600;font-size:14px;margin-bottom:5px">Upload dokumen klien</div>
+          <div style="color:var(--ink3);font-size:12.5px;margin-bottom:12px">JPG, PNG, PDF</div>
+          <button class="btn btn-grn btn-sm" onclick="event.stopPropagation();toast('Gunakan Invoice Scanner untuk proses AI','info')"><i class="ti ti-scan"></i>Scan AI</button>
+        </div>
+        <button class="btn btn-blue" style="width:100%;justify-content:center" onclick="goOp('scanner',null)"><i class="ti ti-scan"></i>Buka Invoice Scanner AI</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ KLIEN: REVIEW ══ -->
+<div id="pg-review" class="page">
+  <div class="card sec-clients">
+    <div class="ch"><span class="ct"><i class="ti ti-check" style="color:var(--grn-d)"></i>Review dan Approve Jurnal</span><span class="tag ta">5 menunggu</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Ref</th><th>Klien</th><th>Tanggal</th><th>Keterangan</th><th>Debit</th><th>Kredit</th><th>AI Confidence</th><th>Aksi</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:monospace;font-size:11.5px">JE-2001</td><td>Toko Maju Jaya</td><td>28 Jun</td><td>INV-2043 — PT Supplier Utama</td><td style="color:var(--blue-d);font-weight:600">Rp 5.550.000</td><td>—</td><td><span class="tag tg">97%</span></td><td><div style="display:flex;gap:5px"><button class="btn btn-grn btn-xs" onclick="toast('JE-2001 diapprove dan diposting','success')"><i class="ti ti-check"></i>Approve</button><button class="btn btn-ghost btn-xs" onclick="openReviewPanel('JE-2001')">Detail</button></div></td></tr>
+        <tr><td style="font-family:monospace;font-size:11.5px">JE-2002</td><td>CV Berkah Jaya</td><td>27 Jun</td><td>EXP-0890 — Gojek Food</td><td style="color:var(--blue-d);font-weight:600">Rp 285.000</td><td>—</td><td><span class="tag tg">95%</span></td><td><div style="display:flex;gap:5px"><button class="btn btn-grn btn-xs" onclick="toast('JE-2002 diapprove','success')"><i class="ti ti-check"></i>Approve</button><button class="btn btn-ghost btn-xs" onclick="openReviewPanel('JE-2002')">Detail</button></div></td></tr>
+        <tr><td style="font-family:monospace;font-size:11.5px">JE-2003</td><td>Toko Maju Jaya</td><td>26 Jun</td><td>Gaji karyawan — nominal tidak jelas</td><td style="color:var(--blue-d);font-weight:600">Rp ???</td><td>—</td><td><span class="tag tr">42%</span></td><td><div style="display:flex;gap:5px"><button class="btn btn-ghost btn-xs" onclick="toast('Klarifikasi dikirim ke klien via WA','info')"><i class="ti ti-message"></i>Klarifikasi</button></div></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ KLIEN: KIRIM LAPORAN ══ -->
+<div id="pg-sendreport" class="page">
+  <div class="g2">
+    <div class="card sec-clients">
+      <div class="ch"><span class="ct"><i class="ti ti-send" style="color:var(--grn-d)"></i>Generate dan Kirim Laporan</span></div>
+      <div class="cb">
+        <div class="fg"><div class="fl">Pilih Klien</div><select><option>Toko Maju Jaya — Bisnis</option><option>CV Berkah Jaya — Starter</option><option>PT Teknologi Maju — Pro</option><option>Semua Klien (batch)</option></select></div>
+        <div class="fg"><div class="fl">Periode</div><select><option>Juni 2026</option><option>Mei 2026</option><option>Q2 2026</option></select></div>
+        <div class="fg"><div class="fl">Jenis Laporan</div>
+          <div style="display:flex;flex-direction:column;gap:7px;margin-top:2px">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked>Laba Rugi (P&L)</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked>Neraca (Balance Sheet)</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox">Arus Kas</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked>Rekap Pajak</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox">SPT Masa PPN</label>
+          </div>
+        </div>
+        <div class="fg"><div class="fl">Cara Pengiriman</div><select><option>Email + Portal klien</option><option>Portal klien saja</option><option>WhatsApp PDF</option></select></div>
+        <div class="fg"><div class="fl">Catatan untuk klien</div><textarea rows="2" style="resize:none" placeholder="Laporan bulan Juni sudah siap. Ada beberapa catatan penting..."></textarea></div>
+        <button class="btn btn-blue" style="width:100%;justify-content:center;padding:11px" onclick="toast('Laporan digenerate dan dikirim ke klien','success')"><i class="ti ti-send"></i>Generate dan Kirim</button>
+      </div>
+    </div>
+    <div>
+      <div class="card sec-clients mb">
+        <div class="ch"><span class="ct"><i class="ti ti-eye" style="color:var(--grn-d)"></i>Preview Laporan Klien</span></div>
+        <div class="cb" style="padding:12px">
+          <div class="rpt-head"><div style="font-weight:700;font-size:14px">Toko Maju Jaya</div><div style="font-size:12px;opacity:.8">Laporan Keuangan — Juni 2026</div></div>
+          <div class="rpt-body">
+            <div style="padding:12px 16px;border-bottom:1px solid var(--bd)">
+              <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;margin-bottom:7px">Ringkasan L/R</div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span>Pendapatan</span><span style="color:var(--grn-d);font-weight:700">Rp 45.500.000</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span>Pengeluaran</span><span style="color:var(--red-d);font-weight:700">Rp 28.200.000</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13.5px;font-weight:700;padding:7px 0;border-top:1px solid var(--bd);margin-top:5px"><span>Laba Bersih</span><span style="color:var(--blue-d)">Rp 17.300.000</span></div>
+            </div>
+            <div style="padding:12px 16px"><div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;margin-bottom:7px">Kewajiban Pajak</div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span>PPN Kurang Bayar</span><span style="color:var(--teal-d);font-weight:600">Rp 1.250.000</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span>PPh 21</span><span style="color:var(--teal-d);font-weight:600">Rp 375.000</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card sec-clients"><div class="ch"><span class="ct"><i class="ti ti-check" style="color:var(--grn-d)"></i>Status Pengiriman Bulan Ini</span></div>
+        <div class="cb" style="padding:12px 18px;font-size:13px">
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd)"><span>Toko Maju Jaya</span><span class="tag tg"><i class="ti ti-check" style="font-size:11px"></i>Terkirim 20 Jun</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd)"><span>CV Berkah Jaya</span><span class="tag ta">Belum dikirim</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0"><span>PT Teknologi Maju</span><span class="tag tg"><i class="ti ti-check" style="font-size:11px"></i>Terkirim 19 Jun</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ KLIEN: BILLING ══ -->
+<div id="pg-billing" class="page">
+  <div class="card sec-clients">
+    <div class="ch"><span class="ct"><i class="ti ti-file-invoice" style="color:var(--grn-d)"></i>Billing Klien</span><button class="btn btn-blue btn-sm" onclick="toast('Invoice bulanan digenerate untuk semua klien','success')"><i class="ti ti-file-invoice"></i>Generate Invoice Bulan Ini</button></div>
+    <div class="tw"><table>
+      <thead><tr><th>Klien</th><th>Paket</th><th>Tagihan</th><th>Jatuh Tempo</th><th>Status</th><th>Metode</th><th>Aksi</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:500">Toko Maju Jaya</td><td><span class="tag tb">Bisnis</span></td><td style="font-weight:600">Rp 799.000</td><td>5 Jul 2026</td><td><span class="tag tg">Lunas</span></td><td>BCA Transfer</td><td><button class="btn-link btn-xs" onclick="toast('Invoice dibuka','info')">Lihat invoice</button></td></tr>
+        <tr><td style="font-weight:500">CV Berkah Jaya</td><td><span class="tag tg">Starter</span></td><td style="font-weight:600">Rp 299.000</td><td>5 Jul 2026</td><td><span class="tag tg">Lunas</span></td><td>Xendit VA</td><td><button class="btn-link btn-xs" onclick="toast('Invoice dibuka','info')">Lihat invoice</button></td></tr>
+        <tr><td style="font-weight:500">PT Teknologi Maju</td><td><span class="tag tp">Pro</span></td><td style="font-weight:600">Rp 2.500.000</td><td>5 Jul 2026</td><td><span class="tag tr">Belum bayar</span></td><td>—</td><td><button class="btn btn-ghost btn-xs" onclick="toast('Reminder WA dikirim','success')"><i class="ti ti-message"></i>Reminder</button></td></tr>
+        <tr><td style="font-weight:500">Warung Bu Sri</td><td><span class="tag tg">Starter</span></td><td style="font-weight:600">Rp 299.000</td><td>5 Jul 2026</td><td><span class="tag ta">Cek manual</span></td><td>Cash</td><td><button class="btn btn-grn btn-xs" onclick="toast('Pembayaran dikonfirmasi','success')"><i class="ti ti-check"></i>Konfirmasi</button></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ PENGATURAN ══ -->
+<div id="pg-settings" class="page">
+  <div class="g2">
+    <div class="card mb"><div class="ch"><span class="ct"><i class="ti ti-building" style="color:var(--blue)"></i>Profil Perusahaan</span></div>
+      <div class="cb">
+        <div class="fg"><div class="fl">Nama perusahaan</div><input type="text" value="PT FinTrack Teknologi Indonesia"></div>
+        <div class="fg"><div class="fl">NPWP perusahaan</div><input type="text" value="01.000.123.4-567.000"></div>
+        <div class="fg"><div class="fl">Status PKP</div><select><option>PKP</option><option>Non-PKP</option></select></div>
+        <div class="fg"><div class="fl">Mata uang</div><select><option>IDR — Rupiah</option><option>USD</option></select></div>
+        <div class="fg"><div class="fl">Akhir tahun fiskal</div><select><option>31 Desember</option><option>31 Maret</option></select></div>
+        <button class="btn btn-blue btn-sm" onclick="toast('Pengaturan disimpan','success')"><i class="ti ti-check"></i>Simpan</button>
+      </div>
+    </div>
+    <div class="card mb"><div class="ch"><span class="ct"><i class="ti ti-receipt-tax" style="color:var(--teal-d)"></i>Konfigurasi Pajak</span></div>
+      <div class="cb">
+        <div class="fg"><div class="fl">Tarif PPN standard</div><input type="text" value="11%"></div>
+        <div class="fg"><div class="fl">PPh 23 — jasa</div><input type="text" value="2%"></div>
+        <div class="fg"><div class="fl">PPh 21 — karyawan</div><input type="text" value="Progresif 5–35%"></div>
+        <div class="fg"><div class="fl">Deteksi pajak otomatis</div><select><option>Aktif</option><option>Nonaktif</option></select></div>
+        <div class="fg"><div class="fl">Periode pelaporan SPT</div><select><option>Bulanan</option><option>Triwulanan</option></select></div>
+        <button class="btn btn-blue btn-sm" onclick="toast('Konfigurasi pajak disimpan','success')"><i class="ti ti-check"></i>Simpan</button>
+      </div>
+    </div>
+    <div class="card"><div class="ch"><span class="ct"><i class="ti ti-plug" style="color:var(--blue)"></i>Integrasi Sistem</span></div>
+      <div class="cb" style="padding:14px 18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)"><div><div style="font-weight:600;font-size:13.5px">DJP Online (e-SPT)</div><div style="font-size:12px;color:var(--ink3)">Submit SPT langsung ke DJP</div></div><span class="tag ta">Konfigurasi</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)"><div><div style="font-weight:600;font-size:13.5px">Bank BCA / Mandiri API</div><div style="font-size:12px;color:var(--ink3)">Rekonsiliasi bank otomatis</div></div><span class="tag tg">Terhubung</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0"><div><div style="font-weight:600;font-size:13.5px">WhatsApp Business API</div><div style="font-size:12px;color:var(--ink3)">Terima dokumen dari klien via WA</div></div><span class="tag tgr">Sambungkan</span></div>
+      </div>
+    </div>
+    <div class="card"><div class="ch"><span class="ct"><i class="ti ti-users" style="color:var(--blue)"></i>Akses Pengguna Tim</span><button class="btn btn-ghost btn-xs" onclick="toast('Undang pengguna baru','info')">Undang</button></div>
+      <div class="cb" style="padding:14px 18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd)">
+          <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:var(--blue-bg);color:var(--blue-d);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px">AD</div><div><div style="font-weight:600;font-size:13px">Admin User</div><div style="font-size:11.5px;color:var(--ink3)">admin@fintrackpro.id</div></div></div>
+          <span class="tag tb">Super Admin</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+          <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:var(--grn-bg);color:var(--grn-d);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px">RS</div><div><div style="font-weight:600;font-size:13px">Rina Sari</div><div style="font-size:11.5px;color:var(--ink3)">rina@fintrackpro.id</div></div></div>
+          <span class="tag tg">Akuntan</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ KAS & BANK ══ -->
+<div id="pg-kasbank" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:500;color:var(--ink2)">Entitas:</span>
+    <button class="btn btn-blue btn-sm" id="kb-op" onclick="setKBEnt('op',this)"><i class="ti ti-building"></i> FinTrack Pro</button>
+    <button class="btn btn-ghost btn-sm" id="kb-cl" onclick="setKBEnt('cl',this)"><i class="ti ti-users"></i> Toko Maju Jaya</button>
+  </div>
+  <div class="g4 mb2" id="kb-kpi"></div>
+  <div class="g2 mb2">
+    <div class="card">
+      <div class="ch"><span class="ct" style="color:var(--blue-d)"><i class="ti ti-building-bank" style="color:var(--blue)"></i>Rekening & Kas</span>
+        <button class="btn btn-blue btn-sm" onclick="toast('Form rekening baru dibuka','info')"><i class="ti ti-plus"></i> Rekening baru</button>
+      </div>
+      <div class="tw"><table>
+        <thead><tr><th>Rekening</th><th>Bank</th><th>Tipe</th><th>Saldo</th><th>Update</th><th></th></tr></thead>
+        <tbody id="kb-bank-tb"></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct"><i class="ti ti-scan" style="color:var(--blue)"></i>Scan Rekening Koran</span>
+        <span class="tag tg" style="font-size:10.5px">Internal — klien tidak melihat proses ini</span>
+      </div>
+      <div class="cb">
+        <div class="upz" onclick="startKBScan()" style="margin-bottom:12px">
+          <i class="ti ti-file-text" style="color:var(--grn-d)"></i>
+          <div style="font-weight:600;font-size:14px;margin-bottom:4px">Upload rekening koran / mutasi bank</div>
+          <div style="color:var(--ink3);font-size:12.5px;margin-bottom:12px">PDF mutasi · CSV · Screenshot — AI baca otomatis</div>
+          <button class="btn btn-grn btn-sm" onclick="event.stopPropagation();startKBScan()"><i class="ti ti-upload"></i> Pilih file</button>
+        </div>
+        <div id="kb-scan-res" style="display:none">
+          <div style="background:var(--grn-bg);border-radius:8px;padding:11px 13px;margin-bottom:11px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--grn-d);font-weight:500">
+            <i class="ti ti-check" style="font-size:17px"></i> AI berhasil baca 47 baris mutasi — confidence 96%
+          </div>
+          <table style="margin-bottom:10px"><thead><tr><th>Tanggal</th><th>Keterangan</th><th>Debit</th><th>Kredit</th><th>Saldo</th></tr></thead>
+          <tbody>
+            <tr><td>28 Jun</td><td>TRANSFER PT MAJU BERSAMA</td><td>—</td><td style="color:var(--grn-d);font-weight:600">55.000.000</td><td>177.300.000</td></tr>
+            <tr><td>27 Jun</td><td>BL TOKOPEDIA RETAIL</td><td style="color:var(--red-d)">2.350.000</td><td>—</td><td>122.300.000</td></tr>
+            <tr><td>26 Jun</td><td>GAJI KARYAWAN JUN 2026</td><td style="color:var(--red-d)">42.750.000</td><td>—</td><td>124.650.000</td></tr>
+            <tr><td>25 Jun</td><td>TRANSFER CV DIGITAL NUSANTARA</td><td>—</td><td style="color:var(--grn-d);font-weight:600">28.600.000</td><td>167.400.000</td></tr>
+          </tbody></table>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-grn" style="flex:1;justify-content:center" onclick="toast('47 mutasi diimport & jurnal diposting otomatis','success');document.getElementById('kb-scan-res').style.display='none'"><i class="ti ti-check"></i> Import semua & post jurnal</button>
+            <button class="btn btn-ghost btn-sm" onclick="toast('Review manual dibuka','info')"><i class="ti ti-eye"></i> Review</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><span class="ct"><i class="ti ti-list" style="color:var(--blue)"></i>Mutasi kas & bank</span>
+      <div style="display:flex;gap:8px">
+        <select style="padding:5px 9px;border:1.5px solid var(--bd);border-radius:7px;font-size:12.5px;background:var(--surf)"><option>Juni 2026</option><option>Mei 2026</option></select>
+        <select style="padding:5px 9px;border:1.5px solid var(--bd);border-radius:7px;font-size:12.5px;background:var(--surf)"><option>Semua rekening</option><option>BCA 555...</option><option>Kas Tunai</option></select>
+      </div>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Tanggal</th><th>Keterangan</th><th>Ref jurnal</th><th>Debit</th><th>Kredit</th><th>Saldo</th><th>Rekening</th><th>Status</th></tr></thead>
+      <tbody id="kb-mutasi-tb"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ ASET TETAP: DAFTAR ══ -->
+<div id="pg-assetlist" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:500;color:var(--ink2)">Entitas:</span>
+    <button class="btn btn-blue btn-sm" id="al-op" onclick="setALEnt('op',this)"><i class="ti ti-building"></i> FinTrack Pro</button>
+    <button class="btn btn-ghost btn-sm" id="al-cl" onclick="setALEnt('cl',this)"><i class="ti ti-users"></i> Toko Maju Jaya</button>
+    <div style="margin-left:auto;display:flex;gap:8px">
+      <select style="padding:5px 9px;border:1.5px solid var(--bd);border-radius:7px;font-size:12.5px;background:var(--surf)" onchange="filterAL(this.value)" id="al-filter">
+        <option value="">Semua kategori</option>
+        <option>Peralatan</option><option>Mesin</option><option>Perlengkapan</option>
+        <option>Kendaraan</option><option>Bangunan</option><option>IT & Komputer</option>
+      </select>
+      <button class="btn btn-blue btn-sm" onclick="document.getElementById('add-asset-modal').style.display='flex'"><i class="ti ti-plus"></i> Tambah aset</button>
+    </div>
+  </div>
+  <div class="g4 mb2" id="al-kpi"></div>
+  <div class="card">
+    <div class="ch"><span class="ct"><i class="ti ti-stack-2" style="color:var(--amb-d)"></i>Daftar Aset Tetap</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Kode</th><th>Nama aset</th><th>Kategori</th><th>Tgl perolehan</th><th>Harga perolehan</th><th>Akum. penyusutan</th><th>Nilai buku (NBV)</th><th>Metode</th><th>Sisa umur</th><th>Status</th><th></th></tr></thead>
+      <tbody id="al-tb"></tbody>
+    </table></div>
+  </div>
+
+  <!-- MODAL TAMBAH ASET -->
+  <div id="add-asset-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.5);align-items:center;justify-content:center">
+    <div style="background:var(--surf);border-radius:12px;border:1px solid var(--bd);width:640px;max-width:95vw;max-height:90vh;overflow-y:auto">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:14px;font-weight:600">Tambah aset tetap baru</span>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-asset-modal').style.display='none'"><i class="ti ti-x"></i></button>
+      </div>
+      <div style="padding:20px">
+        <div class="g2" style="gap:12px">
+          <div>
+            <div class="fg"><div class="fl">Nama aset</div><input type="text" id="na-name" placeholder="Mesin produksi / Laptop / Kendaraan"></div>
+            <div class="g2" style="gap:8px">
+              <div class="fg"><div class="fl">Kategori</div>
+                <select id="na-cat"><option>Peralatan</option><option>Mesin</option><option>Perlengkapan</option><option>Kendaraan</option><option>Bangunan</option><option>IT & Komputer</option></select>
+              </div>
+              <div class="fg"><div class="fl">Lokasi</div><input type="text" id="na-loc" placeholder="Gudang / Kantor"></div>
+            </div>
+            <div class="fg"><div class="fl">Tanggal perolehan</div><input type="date" id="na-date" value="2026-07-01"></div>
+            <div class="fg"><div class="fl">Keterangan</div><textarea id="na-desc" rows="2" style="resize:none" placeholder="Deskripsi aset..."></textarea></div>
+          </div>
+          <div>
+            <div class="fg"><div class="fl">Harga perolehan (Rp)</div><input type="number" id="na-cost" oninput="previewDepr()" placeholder="50000000"></div>
+            <div class="fg"><div class="fl">Nilai residu/sisa (Rp)</div><input type="number" id="na-resid" oninput="previewDepr()" placeholder="5000000"></div>
+            <div class="g2" style="gap:8px">
+              <div class="fg"><div class="fl">Metode penyusutan</div>
+                <select id="na-method" onchange="previewDepr()">
+                  <option value="sl">Garis lurus</option>
+                  <option value="db">Saldo menurun</option>
+                </select>
+              </div>
+              <div class="fg"><div class="fl">Umur ekonomis (thn)</div><input type="number" id="na-life" value="5" min="1" max="50" oninput="previewDepr()"></div>
+            </div>
+            <div style="background:var(--blue-bg);border-radius:8px;padding:12px 14px;margin-bottom:12px">
+              <div style="font-size:11px;font-weight:600;color:var(--blue-d);text-transform:uppercase;margin-bottom:6px">Preview penyusutan tahunan</div>
+              <div style="font-size:18px;font-weight:700;color:var(--blue-d)" id="na-prev-val">—</div>
+              <div style="font-size:12px;color:var(--ink3);margin-top:2px" id="na-prev-sub"></div>
+            </div>
+            <button class="btn btn-grn" style="width:100%;justify-content:center;padding:10px" onclick="addNewAsset()"><i class="ti ti-check"></i> Simpan & buat jurnal perolehan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ASET TETAP: PENYUSUTAN ══ -->
+<div id="pg-penyusutan" class="page">
+  <div class="g4 mb2" id="dp-kpi"></div>
+  <div class="g2 mb2">
+    <div class="card">
+      <div class="ch"><span class="ct"><i class="ti ti-chart-line-down" style="color:var(--amb-d)"></i>Jadwal penyusutan — 5 tahun</span>
+        <select style="width:200px;padding:5px 9px;border:1.5px solid var(--bd);border-radius:7px;font-size:12.5px;background:var(--surf)" onchange="renderDeprSched(this.value)">
+          <option value="0">AST-001 — Server Dell PowerEdge</option>
+          <option value="1">AST-002 — Mobil Toyota Avanza</option>
+          <option value="2">AST-003 — AC Daikin 2PK</option>
+          <option value="3">AST-004 — Meja Kantor</option>
+        </select>
+      </div>
+      <div class="tw"><table>
+        <thead><tr><th>Tahun</th><th>Nilai awal</th><th>Beban penyusutan</th><th>Akum. penyusutan</th><th>Nilai buku akhir</th></tr></thead>
+        <tbody id="dp-sched-tb"></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="ch">
+        <span class="ct"><i class="ti ti-calendar" style="color:var(--amb-d)"></i>Penyusutan bulanan — Juni 2026</span>
+        <button class="btn btn-grn btn-sm" onclick="toast('Jurnal penyusutan Juni diposting ke buku besar','success')"><i class="ti ti-check"></i> Post jurnal</button>
+      </div>
+      <div class="tw"><table>
+        <thead><tr><th>Kode</th><th>Nama aset</th><th>Metode</th><th>Beban/bln</th><th>Akun D</th><th>Akun K</th></tr></thead>
+        <tbody id="dp-monthly-tb"></tbody>
+      </table></div>
+      <div style="padding:11px 14px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;font-size:13.5px;font-weight:600">
+        <span>Total beban penyusutan Juni</span>
+        <span style="color:var(--amb-d)" id="dp-total">—</span>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><span class="ct"><i class="ti ti-list" style="color:var(--amb-d)"></i>Jurnal penyusutan — riwayat otomatis</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Tanggal</th><th>Ref</th><th>Keterangan</th><th>Debit</th><th>Kredit</th><th>Akun</th><th>Status</th></tr></thead>
+      <tbody id="dp-jrn-tb"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ ASET TETAP: DISPOSAL ══ -->
+<div id="pg-disposal" class="page">
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><span class="ct"><i class="ti ti-trash" style="color:var(--red-d)"></i>Form disposal / penghapusan aset</span></div>
+      <div class="cb">
+        <div style="background:var(--amb-bg);border-radius:8px;padding:11px 13px;margin-bottom:14px;font-size:13px;color:var(--amb-d)">
+          <i class="ti ti-alert-triangle"></i> Jurnal laba/rugi pelepasan aset dihitung dan diposting otomatis.
+        </div>
+        <div class="fg"><div class="fl">Pilih aset</div>
+          <select id="disp-sel" onchange="calcDisp()">
+            <option value="">— Pilih aset —</option>
+            <option value="28500000|Server Dell PowerEdge R740">AST-001 — Server Dell (NBV: Rp 28.500.000)</option>
+            <option value="95000000|Mobil Toyota Avanza">AST-002 — Mobil Avanza (NBV: Rp 95.000.000)</option>
+            <option value="3200000|AC Daikin 2PK">AST-003 — AC Daikin (NBV: Rp 3.200.000)</option>
+          </select>
+        </div>
+        <div class="g2" style="gap:8px">
+          <div class="fg"><div class="fl">Jenis disposal</div>
+            <select id="disp-jenis" onchange="calcDisp()"><option value="sale">Dijual</option><option value="scrap">Dibuang/scrap</option><option value="donate">Dihibahkan</option><option value="lost">Hilang/rusak total</option></select>
+          </div>
+          <div class="fg"><div class="fl">Tanggal disposal</div><input type="date" id="disp-tgl" value="2026-07-01"></div>
+        </div>
+        <div class="fg"><div class="fl">Harga jual / nilai disposal (Rp)</div><input type="number" id="disp-price" value="0" oninput="calcDisp()"></div>
+        <div class="fg"><div class="fl">Alasan / keterangan</div><textarea id="disp-reason" rows="2" style="resize:none" placeholder="Dijual karena sudah usang / rusak / diganti baru..."></textarea></div>
+        <div id="disp-prev" style="display:none;border-radius:8px;padding:12px 14px;margin-bottom:12px;font-size:13px"></div>
+        <button class="btn btn-blue" style="width:100%;justify-content:center;padding:10px" onclick="doDisposal()"><i class="ti ti-check"></i> Proses disposal & buat jurnal otomatis</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct"><i class="ti ti-history" style="color:var(--red-d)"></i>Riwayat disposal</span></div>
+      <div class="tw"><table>
+        <thead><tr><th>Tgl</th><th>Aset</th><th>Jenis</th><th>Nilai buku</th><th>Harga jual</th><th>Laba/rugi</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>15 Mar 26</td><td>Printer HP LaserJet</td><td><span class="tag tgr">Dijual</span></td><td>1.500.000</td><td>800.000</td><td style="color:var(--red-d);font-weight:600">-700.000</td><td><span class="tag tg">Diposting</span></td></tr>
+          <tr><td>2 Jan 26</td><td>Laptop Lenovo (rusak)</td><td><span class="tag tr">Scrap</span></td><td>2.000.000</td><td>0</td><td style="color:var(--red-d);font-weight:600">-2.000.000</td><td><span class="tag tg">Diposting</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ KARTU ASET ══ -->
+<div id="pg-kartuaset" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:500;color:var(--ink2)">Pilih aset:</span>
+    <select id="ka-sel" style="width:280px" onchange="renderKartu(this.value)">
+      <option value="0">AST-001 — Server Dell PowerEdge R740</option>
+      <option value="1">AST-002 — Mobil Toyota Avanza</option>
+      <option value="2">AST-003 — AC Daikin 2PK (x3)</option>
+      <option value="3">AST-004 — Meja Kantor (x10)</option>
+    </select>
+    <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="toast('Kartu aset diekspor PDF','success')"><i class="ti ti-printer"></i> Cetak kartu</button>
+  </div>
+  <div class="card">
+    <div class="ch" style="background:var(--surf2)">
+      <span class="ct"><i class="ti ti-id-badge-2" style="color:var(--amb-d)"></i>Kartu Aset Tetap</span>
+      <span class="tag tg" id="ka-status">Aktif</span>
+    </div>
+    <div class="cb">
+      <div class="g2 mb2">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Identitas aset</div>
+          <dl style="display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:13px" id="ka-info"></dl>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Data penyusutan</div>
+          <dl style="display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:13px" id="ka-depr"></dl>
+          <div style="margin-top:12px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);margin-bottom:5px">
+              <span>Penyusutan kumulatif</span><span id="ka-pct">—</span>
+            </div>
+            <div style="height:8px;border-radius:4px;background:var(--surf3);overflow:hidden">
+              <div id="ka-bar" style="height:100%;border-radius:4px;background:var(--amb-d);transition:width .5s"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--bd);padding-top:14px">
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Rincian penyusutan per tahun</div>
+        <div class="tw"><table>
+          <thead><tr><th>Tahun</th><th>Nilai awal</th><th>Beban penyusutan</th><th>Akum. penyusutan</th><th>Nilai buku akhir</th><th>Status</th></tr></thead>
+          <tbody id="ka-sched-tb"></tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div></div></div></div><!-- content/main/shell/view-operator -->
+
+<!-- ═══════════ CLIENT PORTAL VIEW ═══════════ -->
+<div id="view-client" class="view">
+<div class="shell">
+<aside class="sidebar" style="background:#065f46">
+  <div class="sb-head" style="border-bottom-color:rgba(255,255,255,.15)">
+    <div class="sb-section-name" style="color:rgba(255,255,255,.5)">Portal Klien</div>
+    <div class="sb-section-desc" style="color:rgba(255,255,255,.7);font-weight:600">Toko Maju Jaya</div>
+  </div>
+  <div class="sb-divider" style="color:rgba(255,255,255,.4)"><i class="ti ti-home"></i>Menu Utama</div>
+  <div class="ni active" onclick="goCl('cl-home',this)" style="color:rgba(255,255,255,.7)"><i class="ti ti-home"></i>Beranda</div>
+  <div class="ni" onclick="goCl('cl-upload',this)" style="color:rgba(255,255,255,.7)"><i class="ti ti-upload"></i>Kirim Dokumen</div>
+  <div class="ni" onclick="goCl('cl-docs',this)" style="color:rgba(255,255,255,.7)"><i class="ti ti-files"></i>Dokumen Saya</div>
+  <div class="sb-divider" style="color:rgba(255,255,255,.4)"><i class="ti ti-chart-bar"></i>Laporan Saya</div>
+  <div class="ni" onclick="goCl('cl-reports',this)" style="color:rgba(255,255,255,.7)"><i class="ti ti-chart-bar"></i>Laporan Keuangan</div>
+  <div class="ni" onclick="goCl('cl-tax',this)" style="color:rgba(255,255,255,.7)"><i class="ti ti-receipt-tax"></i>Laporan Pajak</div>
+  <div class="sb-divider" style="color:rgba(255,255,255,.4)"><i class="ti ti-credit-card"></i>Lainnya</div>
+  <div class="ni" onclick="goCl('cl-invoice',this)" style="color:rgba(255,255,255,.7)"><i class="ti ti-credit-card"></i>Tagihan Layanan</div>
+  <div class="ni" onclick="goCl('cl-help',this)" style="color:rgba(255,255,255,.7)"><i class="ti ti-help-circle"></i>Bantuan</div>
+  <div class="sb-foot" style="border-top-color:rgba(255,255,255,.15)"><span style="color:rgba(255,255,255,.5)">Paket Bisnis · Aktif</span><div style="color:rgba(255,255,255,.7);margin-top:2px;font-size:11.5px">Laporan berikutnya: 20 Jul</div></div>
+</aside>
+<div class="main">
+<div class="topbar">
+  <div class="tb-left">
+    <div class="tb-title" id="cl-title" style="color:var(--grn-d)"><i class="ti ti-home" style="color:var(--grn-d)"></i>Beranda</div>
+  </div>
+  <div class="tb-right">
+    <button class="btn btn-ghost btn-sm" onclick="toast('Chat WA ke tim FinTrack Pro dibuka','info')"><i class="ti ti-message"></i>Chat FinTrack</button>
+    <button class="btn btn-ghost btn-sm" onclick="toast('Notifikasi: Laporan Juni sudah siap!','success')"><i class="ti ti-bell"></i></button>
+  </div>
+</div>
+<div class="content">
+
+<!-- BERANDA KLIEN -->
+<div id="cl-home" class="page active">
+  <div class="cp-hero" style="background:var(--grn-d)">
+    <div style="font-size:11px;font-weight:600;opacity:.7;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Selamat datang kembali</div>
+    <div style="font-size:20px;font-weight:800;margin-bottom:3px">Toko Maju Jaya</div>
+    <div style="font-size:13px;opacity:.8">Laporan keuangan Juni 2026 sudah siap untuk Anda unduh</div>
+    <button class="btn" style="background:rgba(255,255,255,.2);color:#fff;margin-top:12px;font-size:12.5px" onclick="goCl('cl-reports',null)"><i class="ti ti-chart-bar"></i>Lihat Laporan Keuangan →</button>
+  </div>
+  <div class="g3 mb">
+    <div class="kpi"><div class="kpi-bar" style="background:var(--grn)"></div><div class="kpi-lbl">Pemasukan bulan ini</div><div class="kpi-val" style="color:var(--grn-d)">Rp 45,5jt</div><div class="kpi-sub up">+8% vs Mei</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Pengeluaran bulan ini</div><div class="kpi-val" style="color:var(--red-d)">Rp 28,2jt</div><div class="kpi-sub">Terkontrol</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Laba Bersih</div><div class="kpi-val" style="color:var(--blue-d)">Rp 17,3jt</div><div class="kpi-sub up">Margin 38%</div></div>
+  </div>
+  <div class="g2">
+    <div class="card mb">
+      <div class="ch"><span class="ct"><i class="ti ti-clock" style="color:var(--grn-d)"></i>Status Dokumen Terakhir</span></div>
+      <div class="cb" style="padding:12px 16px">
+        <div class="cp-step"><div class="cp-step-ico" style="background:var(--grn-bg);color:var(--grn-d)"><i class="ti ti-check"></i></div><div><div style="font-weight:600">3 dokumen dikirim</div><div style="font-size:12px;color:var(--ink3)">Hari ini 09:14</div></div><span class="tag tg" style="margin-left:auto">Diterima</span></div>
+        <div class="cp-step"><div class="cp-step-ico" style="background:var(--grn-bg);color:var(--grn-d)"><i class="ti ti-check"></i></div><div><div style="font-weight:600">AI memproses data</div><div style="font-size:12px;color:var(--ink3)">Selesai 09:16</div></div><span class="tag tg" style="margin-left:auto">Selesai</span></div>
+        <div class="cp-step" style="border:1.5px solid var(--blue-t)"><div class="cp-step-ico" style="background:var(--blue-bg);color:var(--blue-d)"><i class="ti ti-eye"></i></div><div><div style="font-weight:600">Tim sedang review</div><div style="font-size:12px;color:var(--ink3)">Estimasi 1–2 jam</div></div><span class="tag tb" style="margin-left:auto">Proses</span></div>
+        <div class="cp-step" style="opacity:.5"><div class="cp-step-ico" style="background:var(--surf3);color:var(--ink3)"><i class="ti ti-check"></i></div><div><div style="font-weight:600;color:var(--ink3)">Masuk ke laporan</div><div style="font-size:12px;color:var(--ink3)">Menunggu approve</div></div></div>
+      </div>
+    </div>
+    <div class="card mb">
+      <div class="ch"><span class="ct"><i class="ti ti-bell" style="color:var(--grn-d)"></i>Notifikasi Penting</span></div>
+      <div class="cb" style="padding:12px 18px">
+        <div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--bd);align-items:flex-start">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--grn);flex-shrink:0;margin-top:4px"></div>
+          <div><div style="font-weight:600;font-size:13px">Laporan Juni 2026 sudah siap</div><div style="font-size:12px;color:var(--ink3)">Unduh di menu Laporan Keuangan</div></div>
+        </div>
+        <div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--bd);align-items:flex-start">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--amb);flex-shrink:0;margin-top:4px"></div>
+          <div><div style="font-weight:600;font-size:13px">Deadline PPh 21 — 20 Juli</div><div style="font-size:12px;color:var(--ink3)">Tim FinTrack sedang menyiapkan</div></div>
+        </div>
+        <div style="display:flex;gap:10px;padding:9px 0;align-items:flex-start">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px"></div>
+          <div><div style="font-weight:600;font-size:13px">Tagihan Juli — Rp 799.000</div><div style="font-size:12px;color:var(--ink3)">Jatuh tempo 5 Juli</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD DOKUMEN KLIEN -->
+<div id="cl-upload" class="page">
+  <div class="g2">
+    <div class="card mb">
+      <div class="ch"><span class="ct"><i class="ti ti-upload" style="color:var(--grn-d)"></i>Kirim Dokumen Baru</span></div>
+      <div class="cb">
+        <div class="upz" onclick="toast('Pilih foto dari HP atau komputer Anda','info')" style="border-color:var(--grn-d)">
+          <i class="ti ti-camera-plus" style="color:var(--grn-d)"></i>
+          <div style="font-weight:600;font-size:14px;margin-bottom:5px">Foto atau upload dokumen</div>
+          <div style="color:var(--ink3);font-size:12.5px;margin-bottom:12px">Nota · Invoice · Struk · Kuitansi</div>
+          <button class="btn btn-grn" onclick="event.stopPropagation();toast('Dokumen berhasil dikirim! Tim akan proses dalam 2 jam kerja','success')"><i class="ti ti-upload"></i>Pilih File</button>
+        </div>
+        <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--ink3)">Atau kirim foto via WhatsApp ke <strong style="color:var(--grn-d)">0812-3456-789</strong></div>
+        <div style="border-top:1px solid var(--bd);margin-top:14px;padding-top:14px">
+          <div class="fg"><div class="fl">Keterangan (opsional)</div><textarea placeholder="Contoh: nota belanja bahan baku dari Pak Ahmad tanggal kemarin..." rows="2" style="resize:none"></textarea></div>
+          <div class="fg"><div class="fl">Kategori</div><select><option>Pengeluaran / Pembelian</option><option>Pemasukan / Penjualan</option><option>Gaji karyawan</option><option>Biaya operasional</option></select></div>
+          <button class="btn btn-grn" style="width:100%;justify-content:center;padding:10px" onclick="toast('Dokumen berhasil dikirim ke FinTrack Pro!','success')"><i class="ti ti-send"></i>Kirim Dokumen</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card mb">
+        <div class="ch"><span class="ct"><i class="ti ti-help-circle" style="color:var(--grn-d)"></i>Dokumen Apa yang Perlu Dikirim?</span></div>
+        <div class="cb" style="padding:12px 18px;font-size:13px">
+          <div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd)"><i class="ti ti-check" style="color:var(--grn-d)"></i><div><div style="font-weight:500">Nota / struk pembelian</div><div style="font-size:12px;color:var(--ink3)">Belanja bahan, supplies, peralatan</div></div></div>
+          <div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd)"><i class="ti ti-check" style="color:var(--grn-d)"></i><div><div style="font-weight:500">Invoice dari supplier</div><div style="font-size:12px;color:var(--ink3)">Tagihan yang Anda terima dari vendor</div></div></div>
+          <div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd)"><i class="ti ti-check" style="color:var(--grn-d)"></i><div><div style="font-weight:500">Bukti penjualan ke pelanggan</div><div style="font-size:12px;color:var(--ink3)">Kuitansi atau invoice yang Anda keluarkan</div></div></div>
+          <div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd)"><i class="ti ti-check" style="color:var(--grn-d)"></i><div><div style="font-weight:500">Slip atau rekap gaji karyawan</div><div style="font-size:12px;color:var(--ink3)">Bukti pembayaran gaji bulanan</div></div></div>
+          <div style="display:flex;gap:8px;padding:7px 0"><i class="ti ti-check" style="color:var(--grn-d)"></i><div><div style="font-weight:500">Mutasi rekening bank (akhir bulan)</div><div style="font-size:12px;color:var(--ink3)">Screenshot atau download dari m-banking</div></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="ct"><i class="ti ti-chart-bar" style="color:var(--grn-d)"></i>Kuota Dokumen Bulan Ini</span></div>
+        <div class="cb" style="padding:14px 18px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span>Terpakai</span><span style="font-weight:600">34 / 150 dokumen</span></div>
+          <div class="prog"><div class="progf" style="width:23%;background:var(--grn)"></div></div>
+          <div style="font-size:12px;color:var(--grn-d);margin-top:6px">116 dokumen tersisa bulan ini</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DOKUMEN SAYA KLIEN -->
+<div id="cl-docs" class="page">
+  <div class="card">
+    <div class="ch"><span class="ct"><i class="ti ti-files" style="color:var(--grn-d)"></i>Semua Dokumen Saya</span>
+      <select style="padding:5px 9px;border:1.5px solid var(--bd);border-radius:7px;font-size:12.5px;background:var(--surf)"><option>Juni 2026</option><option>Mei 2026</option><option>Semua</option></select>
+    </div>
+    <div class="cb" style="padding:14px 18px">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd);font-size:13px">
+        <div style="width:36px;height:36px;border-radius:7px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-file-invoice" style="color:var(--blue-d)"></i></div>
+        <div style="flex:1"><div style="font-weight:500">Invoice supplier — PT Bahan Baku Jaya</div><div style="font-size:11.5px;color:var(--ink3)">28 Jun · Rp 5.550.000 · PPN 11%</div></div>
+        <span class="tag tg">Diproses</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd);font-size:13px">
+        <div style="width:36px;height:36px;border-radius:7px;background:var(--grn-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-receipt" style="color:var(--grn-d)"></i></div>
+        <div style="flex:1"><div style="font-weight:500">Struk belanja — Alfamart</div><div style="font-size:11.5px;color:var(--ink3)">27 Jun · Rp 285.000</div></div>
+        <span class="tag tg">Diproses</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd);font-size:13px">
+        <div style="width:36px;height:36px;border-radius:7px;background:var(--amb-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-file" style="color:var(--amb-d)"></i></div>
+        <div style="flex:1"><div style="font-weight:500">Nota penjualan tangan</div><div style="font-size:11.5px;color:var(--ink3)">26 Jun · Rp 1.200.000</div></div>
+        <span class="tag tb">Review tim</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;font-size:13px">
+        <div style="width:36px;height:36px;border-radius:7px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-file-invoice" style="color:var(--blue-d)"></i></div>
+        <div style="flex:1"><div style="font-weight:500">Invoice ke pelanggan — Bu Dewi</div><div style="font-size:11.5px;color:var(--ink3)">25 Jun · Rp 3.500.000</div></div>
+        <span class="tag tg">Diproses</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAPORAN KEUANGAN KLIEN -->
+<div id="cl-reports" class="page">
+  <div class="g4 mb2">
+    <div class="kpi"><div class="kpi-bar" style="background:var(--grn)"></div><div class="kpi-lbl">Pemasukan</div><div class="kpi-val" style="color:var(--grn-d)">Rp 45,5jt</div><div class="kpi-sub up">+8% vs Mei</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Pengeluaran</div><div class="kpi-val" style="color:var(--red-d)">Rp 28,2jt</div><div class="kpi-sub">62% dari revenue</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Laba Bersih</div><div class="kpi-val" style="color:var(--blue-d)">Rp 17,3jt</div><div class="kpi-sub up">Margin 38%</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--teal)"></div><div class="kpi-lbl">Kewajiban Pajak</div><div class="kpi-val" style="color:var(--teal-d)">Rp 1,6jt</div><div class="kpi-sub w">Deadline 31 Jul</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><span class="ct"><i class="ti ti-chart-bar" style="color:var(--grn-d)"></i>Laporan Laba Rugi — Juni 2026</span><button class="btn btn-ghost btn-sm" onclick="toast('PDF Laporan L/R diunduh','success')"><i class="ti ti-download"></i>PDF</button></div>
+      <div class="tw"><table><thead><tr><th>Kategori</th><th>Jumlah (Rp)</th></tr></thead><tbody>
+        <tr style="background:var(--grn-bg)"><td style="font-weight:700;color:#065f46">PENDAPATAN</td><td></td></tr>
+        <tr><td style="padding-left:20px">Penjualan langsung</td><td style="color:var(--grn-d);font-weight:600">42.000.000</td></tr>
+        <tr><td style="padding-left:20px">Penjualan online</td><td style="color:var(--grn-d);font-weight:600">3.500.000</td></tr>
+        <tr style="background:var(--grn-bg)"><td style="font-weight:700">Total Pendapatan</td><td style="font-weight:700;color:var(--grn-d)">45.500.000</td></tr>
+        <tr style="background:var(--red-bg)"><td style="font-weight:700;color:#991b1b">PENGELUARAN</td><td></td></tr>
+        <tr><td style="padding-left:20px">Harga pokok barang</td><td style="color:var(--red-d)">18.200.000</td></tr>
+        <tr><td style="padding-left:20px">Gaji karyawan</td><td style="color:var(--red-d)">6.000.000</td></tr>
+        <tr><td style="padding-left:20px">Sewa tempat</td><td style="color:var(--red-d)">2.500.000</td></tr>
+        <tr><td style="padding-left:20px">Listrik dan air</td><td style="color:var(--red-d)">800.000</td></tr>
+        <tr><td style="padding-left:20px">Lain-lain</td><td style="color:var(--red-d)">700.000</td></tr>
+        <tr style="background:var(--red-bg)"><td style="font-weight:700">Total Pengeluaran</td><td style="font-weight:700;color:var(--red-d)">28.200.000</td></tr>
+        <tr style="background:var(--blue-bg)"><td style="font-weight:800;font-size:14px;color:var(--blue-d)">LABA BERSIH</td><td style="font-weight:800;font-size:14px;color:var(--blue-d)">17.300.000</td></tr>
+      </tbody></table></div>
+    </div>
+    <div>
+      <div class="card mb">
+        <div class="ch"><span class="ct"><i class="ti ti-history" style="color:var(--grn-d)"></i>Riwayat Laporan</span></div>
+        <div class="cb" style="padding:12px 18px;font-size:13px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bd)"><div><div style="font-weight:600">Laporan Juni 2026</div><div style="font-size:12px;color:var(--ink3)">L/R + Neraca + Pajak</div></div><button class="btn btn-ghost btn-xs" onclick="toast('Laporan Juni diunduh','success')"><i class="ti ti-download"></i>PDF</button></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bd)"><div><div style="font-weight:600">Laporan Mei 2026</div><div style="font-size:12px;color:var(--ink3)">L/R + Neraca + Pajak</div></div><button class="btn btn-ghost btn-xs" onclick="toast('Laporan Mei diunduh','success')"><i class="ti ti-download"></i>PDF</button></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0"><div><div style="font-weight:600">Laporan April 2026</div><div style="font-size:12px;color:var(--ink3)">L/R + Neraca + Pajak</div></div><button class="btn btn-ghost btn-xs" onclick="toast('Laporan April diunduh','success')"><i class="ti ti-download"></i>PDF</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAPORAN PAJAK KLIEN -->
+<div id="cl-tax" class="page">
+  <div class="card mb">
+    <div class="ch"><span class="ct"><i class="ti ti-receipt-tax" style="color:var(--grn-d)"></i>Ringkasan Pajak — Juni 2026</span></div>
+    <div class="cb" style="padding:12px 18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--bd);font-size:13.5px"><div><div style="font-weight:600">PPh 21 — Gaji karyawan</div><div style="font-size:12px;color:var(--ink3)">Sudah dipotong dan disetor oleh FinTrack Pro</div></div><div style="text-align:right"><div style="font-weight:700;color:var(--teal-d)">Rp 375.000</div><span class="tag tg" style="font-size:10.5px">Selesai</span></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--bd);font-size:13.5px"><div><div style="font-weight:600">PPN Masukan (dari pembelian)</div><div style="font-size:12px;color:var(--ink3)">Kredit pajak dari supplier PKP</div></div><div style="text-align:right"><div style="font-weight:700;color:var(--grn-d)">Rp 385.000</div><span class="tag tb" style="font-size:10.5px">Kredit</span></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;font-size:13.5px"><div><div style="font-weight:600">PPN Kurang Bayar</div><div style="font-size:12px;color:var(--ink3)">Wajib disetor paling lambat 31 Juli</div></div><div style="text-align:right"><div style="font-weight:700;color:var(--amb-d)">Rp 1.250.000</div><span class="tag ta" style="font-size:10.5px">31 Jul</span></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><span class="ct"><i class="ti ti-calendar-event" style="color:var(--grn-d)"></i>Kalender Pajak Saya</span></div>
+    <div class="cb" style="padding:12px 18px;font-size:13px">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bd)"><div><div style="font-weight:600">PPh 21 penyetoran</div><div style="font-size:12px;color:var(--ink3)">Tim FinTrack Pro mengurus untuk Anda</div></div><span class="tag tr">20 Jul</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0"><div><div style="font-weight:600">SPT Masa PPN</div><div style="font-size:12px;color:var(--ink3)">Draft sudah disiapkan tim FinTrack Pro</div></div><span class="tag ta">31 Jul</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAGIHAN KLIEN -->
+<div id="cl-invoice" class="page">
+  <div class="card mb">
+    <div class="ch"><span class="ct"><i class="ti ti-credit-card" style="color:var(--grn-d)"></i>Tagihan Layanan FinTrack Pro</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Periode</th><th>Paket</th><th>Nominal</th><th>Jatuh Tempo</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>Juli 2026</td><td><span class="tag tb">Bisnis</span></td><td style="font-weight:600">Rp 799.000</td><td>5 Jul 2026</td><td><span class="tag tr">Belum bayar</span></td><td><button class="btn btn-grn btn-xs" onclick="toast('Link pembayaran: BCA VA 1234567890','info')"><i class="ti ti-credit-card"></i>Bayar</button></td></tr>
+        <tr><td>Juni 2026</td><td><span class="tag tb">Bisnis</span></td><td style="font-weight:600">Rp 799.000</td><td>5 Jun 2026</td><td><span class="tag tg">Lunas</span></td><td><button class="btn btn-ghost btn-xs" onclick="toast('Kuitansi Juni diunduh','success')"><i class="ti ti-download"></i>Kuitansi</button></td></tr>
+        <tr><td>Mei 2026</td><td><span class="tag tb">Bisnis</span></td><td style="font-weight:600">Rp 799.000</td><td>5 Mei 2026</td><td><span class="tag tg">Lunas</span></td><td><button class="btn btn-ghost btn-xs" onclick="toast('Kuitansi Mei diunduh','success')"><i class="ti ti-download"></i>Kuitansi</button></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="card" style="background:var(--blue-bg);border-color:var(--blue-t)">
+    <div class="cb" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
+      <i class="ti ti-headset" style="font-size:28px;color:var(--blue-d)"></i>
+      <div><div style="font-weight:700;font-size:14px;color:var(--blue-d)">Pertanyaan soal tagihan?</div><div style="font-size:12.5px;color:var(--ink2)">Chat langsung dengan tim FinTrack Pro</div></div>
+      <button class="btn btn-blue btn-sm" style="margin-left:auto" onclick="toast('WhatsApp 0812-3456-789 dibuka','info')"><i class="ti ti-message"></i>Chat WA</button>
+    </div>
+  </div>
+</div>
+
+<!-- BANTUAN KLIEN -->
+<div id="cl-help" class="page">
+  <div class="g2">
+    <div class="card mb">
+      <div class="ch"><span class="ct"><i class="ti ti-help-circle" style="color:var(--grn-d)"></i>Pertanyaan Umum</span></div>
+      <div class="cb" style="padding:12px 18px;font-size:13px">
+        <div style="padding:10px 0;border-bottom:1px solid var(--bd)"><div style="font-weight:600;margin-bottom:4px">Kapan laporan keuangan saya dikirim?</div><div style="color:var(--ink3)">Setiap tanggal 20 bulan berikutnya. Pastikan semua dokumen masuk sebelum tanggal 10.</div></div>
+        <div style="padding:10px 0;border-bottom:1px solid var(--bd)"><div style="font-weight:600;margin-bottom:4px">Berapa banyak dokumen yang bisa dikirim?</div><div style="color:var(--ink3)">Paket Bisnis: hingga 150 dokumen per bulan. Sisa kuota terlihat di halaman Upload.</div></div>
+        <div style="padding:10px 0;border-bottom:1px solid var(--bd)"><div style="font-weight:600;margin-bottom:4px">Bagaimana cara kirim dokumen via WhatsApp?</div><div style="color:var(--ink3)">Foto dan kirim ke 0812-3456-789. Tulis keterangan singkat, misal "nota beli bahan baku tgl 20 Jun".</div></div>
+        <div style="padding:10px 0"><div style="font-weight:600;margin-bottom:4px">Apakah data keuangan saya aman?</div><div style="color:var(--ink3)">Ya. Data dienkripsi dan disimpan di server Indonesia. Kami tidak pernah membagikan data Anda.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card mb">
+        <div class="ch"><span class="ct"><i class="ti ti-message" style="color:var(--grn-d)"></i>Hubungi Tim FinTrack</span></div>
+        <div class="cb">
+          <button class="btn btn-grn" style="width:100%;justify-content:center;margin-bottom:8px" onclick="toast('WhatsApp dibuka','info')"><i class="ti ti-brand-whatsapp"></i>Chat via WhatsApp</button>
+          <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="toast('Email: halo@fintrackpro.id','info')"><i class="ti ti-mail"></i>halo@fintrackpro.id</button>
+          <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--ink3)">Senin–Jumat · 08.00–17.00 WIB</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="ct"><i class="ti ti-star" style="color:var(--grn-d)"></i>Paket Anda</span></div>
+        <div class="cb">
+          <div style="background:var(--blue-bg);border-radius:8px;padding:14px;margin-bottom:10px">
+            <div style="font-size:11px;font-weight:700;color:#1e40af;text-transform:uppercase">Bisnis Plan</div>
+            <div style="font-size:22px;font-weight:800;color:var(--blue-d);margin:4px 0">Rp 799.000<span style="font-size:13px;font-weight:400;color:var(--ink3)">/bulan</span></div>
+            <div style="font-size:12.5px;color:var(--ink2)">150 dokumen · L/R + Neraca + Pajak · SPT PPN · 1x konsultasi</div>
+          </div>
+          <button class="btn btn-blue btn-sm" style="width:100%;justify-content:center" onclick="toast('Halaman upgrade ke Pro dibuka','info')"><i class="ti ti-arrow-up"></i>Upgrade ke Pro</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div></div></div></div><!-- content/main/shell/view-client -->
+
+<script>
+// ── STATE ──
+const ST={journals:[],txs:[],refs:2000,ppnOut:0,ppnIn:0,pph:0};
+
+const TX_DB={
+  'INV-2042':{ref:'INV-2042',date:'28 Jun 26',party:'PT Maju Bersama',npwp:'01.234.567.8-901.000',kind:'Penjualan',dpp:49549550,tax:5450450,total:55000000,taxType:'PPN 11%',acc:'1100',status:'Diposting',desc:'Software development services',items:[{n:'Software dev Juni 2026',q:1,u:49549550,a:49549550}]},
+  'EXP-0521':{ref:'EXP-0521',date:'27 Jun 26',party:'Tokopedia',npwp:'—',kind:'Pengeluaran',dpp:2117117,tax:232883,total:2350000,taxType:'PPN 11%',acc:'6100',status:'Diposting',desc:'Perlengkapan kantor',items:[{n:'Kertas A4',q:10,u:50000,a:500000},{n:'Toner',q:2,u:350000,a:700000}]},
+  'PAY-0218':{ref:'PAY-0218',date:'26 Jun 26',party:'14 Karyawan',npwp:'various',kind:'Penggajian',dpp:45000000,tax:2250000,total:45000000,taxType:'PPh 21',acc:'5100',status:'Diposting',desc:'Gaji bulan Juni 2026',items:[{n:'Gaji bersih 14 karyawan',q:14,u:3053571,a:42750000}]},
+  'INV-2041':{ref:'INV-2041',date:'25 Jun 26',party:'CV Digital Nusantara',npwp:'09.876.543.2-012.000',kind:'Penjualan',dpp:25765765,tax:2834235,total:28600000,taxType:'PPN 11%',acc:'4000',status:'Diposting',desc:'Web development project',items:[{n:'Redesain website',q:1,u:25765765,a:25765765}]},
+  'INV-2035':{ref:'INV-2035',date:'28 Mei 26',party:'PT Karya Mandiri',npwp:'05.555.555.5',kind:'Penjualan',dpp:7657657,tax:842343,total:8500000,taxType:'PPN 11%',acc:'1100',status:'Terlambat',desc:'Konsultasi Mei'},
+};
+
+const SAMPLES={
+  purchase:{no:'PO-2026-0456',date:'2026-06-28',vendor:'PT Sumber Makmur',npwp:'01.234.111.1-901.000',dpp:18000000,tax:'ppn11',kind:'purchase',acc:'2100',desc:'Pembelian peralatan kantor',items:[{n:'Kursi ergonomis',q:5,u:1800000,a:9000000},{n:'Standing desk',q:3,u:2000000,a:6000000},{n:'Monitor arm',q:3,u:1000000,a:3000000}]},
+  sales:{no:'INV-2043',date:'2026-06-28',vendor:'CV Digital Nusantara',npwp:'09.876.543.2-012.000',dpp:50000000,tax:'ppn11',kind:'sales',acc:'1100',desc:'Software development Juni 2026',items:[{n:'Backend API',q:1,u:30000000,a:30000000},{n:'Frontend',q:1,u:20000000,a:20000000}]},
+  expense:{no:'RCP-0893',date:'2026-06-28',vendor:'Grab Food',npwp:'',dpp:750000,tax:'none',kind:'expense',acc:'6100',desc:'Makan siang tim',items:[{n:'Makan siang 10 orang',q:10,u:75000,a:750000}]},
+  service:{no:'SVC-0201',date:'2026-06-28',vendor:'PT Konsultan Andalan',npwp:'07.777.777.7-777.000',dpp:10000000,tax:'pph23',kind:'purchase',acc:'6200',desc:'IT consulting Juni 2026',items:[{n:'Konsultasi IT (40 jam)',q:40,u:250000,a:10000000}]}
+};
+
+const CLIENTS=[
+  {id:'C001',name:'Toko Maju Jaya',type:'Perdagangan',legal:'CV',npwp:'12.345.678.9',plan:'bisnis',pr:'Rp 799.000',joined:'Jan 2026',docs:34,lim:150,status:'Aktif',billing:'Lunas'},
+  {id:'C002',name:'CV Berkah Jaya',type:'Jasa',legal:'CV',npwp:'—',plan:'starter',pr:'Rp 299.000',joined:'Feb 2026',docs:12,lim:30,status:'Aktif',billing:'Lunas'},
+  {id:'C003',name:'PT Teknologi Maju',type:'IT/Software',legal:'PT',npwp:'01.000.123.4',plan:'pro',pr:'Rp 2.500.000',joined:'Mar 2026',docs:87,lim:999,status:'Aktif',billing:'Belum bayar'},
+  {id:'C004',name:'Warung Bu Sri',type:'Perdagangan',legal:'Perorangan',npwp:'—',plan:'starter',pr:'Rp 299.000',joined:'Apr 2026',docs:8,lim:30,status:'Trial',billing:'Gratis'},
+  {id:'C005',name:'Klinik Dr. Ahmad',type:'Kesehatan',legal:'CV',npwp:'09.876.543.2',plan:'bisnis',pr:'Rp 799.000',joined:'Mei 2026',docs:22,lim:150,status:'Aktif',billing:'Lunas'},
+];
+
+function rp(n){return'Rp '+Math.round(n).toLocaleString('id-ID')}
+function planTag(p){return p==='starter'?'<span class="tag tg">Starter</span>':p==='bisnis'?'<span class="tag tb">Bisnis</span>':'<span class="tag tp">Pro</span>'}
+function kindTag(k){return k==='Penjualan'?'<span class="tag tg">Penjualan</span>':k==='Pengeluaran'?'<span class="tag ta">Pengeluaran</span>':k==='Penggajian'?'<span class="tag tt">Penggajian</span>':'<span class="tag tb">Pembelian</span>'}
+
+// ── NAVIGATION ──
+const OP_MAP={
+  'dash':'Dashboard','scanner':'Invoice Scanner AI','transactions':'Transaksi',
+  'ar':'Piutang Usaha (A/R)','ap':'Hutang Usaha (A/P)','cashflow':'Arus Kas',
+  'journal':'Jurnal Entries','ledger':'Buku Besar','coa':'Daftar Akun (COA)',
+  'trialbal':'Neraca Saldo','finreport':'Laporan Keuangan',
+  'taxsum':'Ringkasan Pajak','ppn':'SPT Masa PPN','pph':'PPh Withholding','taxcal':'Kalender Pajak',
+  'clients':'Semua Klien','onboard':'Onboarding Klien Baru','docsqueue':'Dokumen Masuk',
+  'review':'Review dan Approve','sendreport':'Kirim Laporan','billing':'Billing Klien',
+  'settings':'Pengaturan',
+  'kasbank':'Kas & Bank',
+  'assetlist':'Aset Tetap — Daftar',
+  'penyusutan':'Aset Tetap — Penyusutan',
+  'disposal':'Aset Tetap — Disposal',
+  'kartuaset':'Kartu Aset'
+};
+const OP_ICONS={
+  'dash':'ti-layout-dashboard','scanner':'ti-scan','transactions':'ti-arrows-exchange',
+  'ar':'ti-receipt','ap':'ti-credit-card','cashflow':'ti-cash',
+  'journal':'ti-notebook','ledger':'ti-book','coa':'ti-list-numbers',
+  'trialbal':'ti-scale','finreport':'ti-chart-bar',
+  'taxsum':'ti-receipt-tax','ppn':'ti-percentage','pph':'ti-coin','taxcal':'ti-calendar-event',
+  'clients':'ti-users','onboard':'ti-user-plus','docsqueue':'ti-inbox',
+  'review':'ti-check','sendreport':'ti-send','billing':'ti-file-invoice','settings':'ti-settings'
+};
+const OP_COLORS={
+  'scanner':'var(--blue)','transactions':'var(--blue)','ar':'var(--blue)','ap':'var(--blue)','cashflow':'var(--blue)',
+  'journal':'var(--pur-d)','ledger':'var(--pur-d)','coa':'var(--pur-d)','trialbal':'var(--pur-d)','finreport':'var(--pur-d)',
+  'taxsum':'var(--teal-d)','ppn':'var(--teal-d)','pph':'var(--teal-d)','taxcal':'var(--teal-d)',
+  'clients':'var(--grn-d)','onboard':'var(--grn-d)','docsqueue':'var(--grn-d)','review':'var(--grn-d)','sendreport':'var(--grn-d)','billing':'var(--grn-d)',
+};
+
+function goOp(pg,el){
+  document.querySelectorAll('#view-operator .page').forEach(p=>p.classList.remove('active'));
+  const p=document.getElementById('pg-'+pg);if(p)p.classList.add('active');
+  document.querySelectorAll('.sidebar .ni').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const ic=OP_ICONS[pg]||'ti-file';
+  const col=OP_COLORS[pg]||'var(--blue)';
+  document.getElementById('op-title').innerHTML=`<i class="ti ${ic}" style="color:${col}"></i>${OP_MAP[pg]||pg}`;
+  document.getElementById('op-bc').textContent=pg!=='dash'?' / '+OP_MAP[pg]:'';
+}
+
+const CL_MAP={'cl-home':'Beranda','cl-upload':'Kirim Dokumen','cl-docs':'Dokumen Saya','cl-reports':'Laporan Keuangan','cl-tax':'Laporan Pajak','cl-invoice':'Tagihan Layanan','cl-help':'Bantuan'};
+const CL_IC={'cl-home':'ti-home','cl-upload':'ti-upload','cl-docs':'ti-files','cl-reports':'ti-chart-bar','cl-tax':'ti-receipt-tax','cl-invoice':'ti-credit-card','cl-help':'ti-help-circle'};
+
+function goCl(pg,el){
+  document.querySelectorAll('#view-client .page').forEach(p=>p.classList.remove('active'));
+  const p=document.getElementById(pg);if(p)p.classList.add('active');
+  document.querySelectorAll('#view-client .ni').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.getElementById('cl-title').innerHTML=`<i class="ti ${CL_IC[pg]||'ti-file'}" style="color:var(--grn-d)"></i>${CL_MAP[pg]||pg}`;
+}
+
+function switchView(v){
+  document.getElementById('view-operator').classList.toggle('active',v==='operator');
+  document.getElementById('view-client').classList.toggle('active',v==='client');
+  document.getElementById('mb-op').classList.toggle('active',v==='operator');
+  document.getElementById('mb-cl').classList.toggle('active',v==='client');
+}
+
+// ── TOAST ──
+function toast(msg,type){
+  const t=document.getElementById('toast-el'),i=document.getElementById('ti'),m=document.getElementById('tm');
+  m.textContent=msg;
+  if(type==='success'){i.className='ti ti-check';t.style.background='#065f46';}
+  else if(type==='info'){i.className='ti ti-info-circle';t.style.background='#1e40af';}
+  else{i.className='ti ti-alert-circle';t.style.background='#991b1b';}
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// ── PANEL ──
+function openTxPanel(ref){
+  const d=TX_DB[ref];if(!d)return;
+  const jrn=ST.journals.filter(j=>j.srcRef===ref);
+  document.getElementById('ph-title').textContent=ref+' — '+d.party;
+  document.getElementById('ph-acts').innerHTML=`<button class="btn btn-ghost btn-xs" onclick="toast('${ref} diekspor','success')"><i class="ti ti-download"></i>Export</button>`;
+  const items=(d.items||[]).map(it=>`<tr><td>${it.n}</td><td>${it.q}</td><td>${rp(it.u)}</td><td style="font-weight:600">${rp(it.a)}</td></tr>`).join('');
+  const jrnRows=jrn.length?jrn.map(j=>`<tr><td style="font-family:monospace;font-size:11.5px">${j.ref}</td><td>${j.desc}</td><td style="color:var(--blue-d)">${j.dr?rp(j.dr):'—'}</td><td style="color:var(--grn-d)">${j.cr?rp(j.cr):'—'}</td></tr>`).join(''):`<tr><td colspan="4" style="text-align:center;color:var(--ink3);padding:12px">Post entry untuk generate jurnal</td></tr>`;
+  document.getElementById('pb').innerHTML=`
+    <div class="psec"><div class="psec-t">Informasi Transaksi</div>
+      <dl class="dl">
+        <dt>Referensi</dt><dd style="font-family:monospace">${d.ref}</dd>
+        <dt>Tanggal</dt><dd>${d.date}</dd>
+        <dt>Pihak</dt><dd style="font-weight:600">${d.party}</dd>
+        <dt>NPWP</dt><dd style="font-family:monospace">${d.npwp}</dd>
+        <dt>Jenis</dt><dd>${kindTag(d.kind)}</dd>
+        <dt>Status</dt><dd><span class="tag ${d.status==='Diposting'?'tg':d.status==='Terlambat'?'ta':'tr'}">${d.status}</span></dd>
+        <dt>Keterangan</dt><dd style="text-align:right">${d.desc}</dd>
+      </dl>
+    </div>
+    <div class="psec"><div class="psec-t">Rincian Keuangan</div>
+      <dl class="dl">
+        <dt>DPP</dt><dd>${rp(d.dpp)}</dd>
+        <dt>Jenis Pajak</dt><dd><span class="tag tp">${d.taxType}</span></dd>
+        <dt>Pajak</dt><dd style="color:var(--pur-d);font-weight:600">${rp(d.tax)}</dd>
+        <dt>Total</dt><dd style="font-size:15px;font-weight:700;color:${d.kind==='Penjualan'?'var(--grn-d)':'var(--red-d)'}">${rp(d.total)}</dd>
+      </dl>
+    </div>
+    ${d.items?`<div class="psec"><div class="psec-t">Rincian Item</div>
+      <table><thead><tr><th>Item</th><th>Qty</th><th>Harga</th><th>Subtotal</th></tr></thead>
+      <tbody>${items}</tbody></table></div>`:''}
+    <div class="psec"><div class="psec-t">Jurnal Entries Terkait</div>
+      <table><thead><tr><th>Ref</th><th>Keterangan</th><th>Debit</th><th>Kredit</th></tr></thead>
+      <tbody>${jrnRows}</tbody></table>
+    </div>
+    <div class="psec"><div class="psec-t">Alokasi Pajak</div>
+      <dl class="dl">
+        <dt>Jenis pajak</dt><dd><span class="tag tp">${d.taxType}</span></dd>
+        <dt>DPP</dt><dd>${rp(d.dpp)}</dd>
+        <dt>Pajak dikenakan</dt><dd style="color:var(--pur-d);font-weight:600">${rp(d.tax)}</dd>
+        <dt>Status SPT</dt><dd><span class="tag ${jrn.length?'tg':'tgr'}">${jrn.length?'Sudah diposting':'Belum diposting'}</span></dd>
+      </dl>
+    </div>`;
+  document.getElementById('panel-bg').classList.add('open');
+}
+
+function openReviewPanel(ref){
+  document.getElementById('ph-title').textContent='Review Jurnal: '+ref;
+  document.getElementById('ph-acts').innerHTML=`<button class="btn btn-grn btn-xs" onclick="toast('${ref} diapprove','success');closePanel()"><i class="ti ti-check"></i>Approve</button>`;
+  const isLow=ref==='JE-2003';
+  document.getElementById('pb').innerHTML=`
+    <div class="psec"><div class="psec-t">Detail Jurnal</div>
+      <dl class="dl">
+        <dt>Referensi</dt><dd style="font-family:monospace">${ref}</dd>
+        <dt>AI Confidence</dt><dd><span class="tag ${isLow?'tr':'tg'}">${isLow?'42%':'96%'}</span></dd>
+        <dt>Klien</dt><dd style="font-weight:600">Toko Maju Jaya</dd>
+        <dt>Vendor</dt><dd>PT Supplier Utama</dd>
+        <dt>DPP</dt><dd>Rp 5.000.000</dd>
+        <dt>PPN 11%</dt><dd>Rp 550.000</dd>
+        <dt>Total</dt><dd style="font-weight:700;color:var(--blue-d)">Rp 5.550.000</dd>
+      </dl>
+    </div>
+    <div class="psec"><div class="psec-t">Jurnal yang Akan Diposting</div>
+      <table><thead><tr><th>Akun</th><th>Debit</th><th>Kredit</th></tr></thead>
+      <tbody>
+        <tr><td><span class="acc-chip">6100 — Biaya Kantor</span></td><td style="color:var(--blue-d);font-weight:600">5.000.000</td><td>—</td></tr>
+        <tr><td><span class="acc-chip">1300 — PPN Masukan</span></td><td style="color:var(--blue-d);font-weight:600">550.000</td><td>—</td></tr>
+        <tr><td><span class="acc-chip">2100 — Hutang Usaha</span></td><td>—</td><td style="color:var(--grn-d);font-weight:600">5.550.000</td></tr>
+      </tbody></table>
+    </div>
+    ${isLow?`<div class="psec"><div class="psec-t" style="color:var(--red-d)">Perhatian — Confidence Rendah</div><div style="background:var(--red-bg);border-radius:8px;padding:12px;font-size:13px;color:var(--red-d)">Nominal tidak terbaca dengan jelas. Konfirmasi ke klien sebelum approve.</div></div>`:''}`;
+  document.getElementById('panel-bg').classList.add('open');
+}
+
+function closePanel(){document.getElementById('panel-bg').classList.remove('open');}
+
+// ── INVOICE SCANNER ──
+function trigScan(){
+  document.getElementById('scan-panel').style.display='none';
+  document.getElementById('ai-box').classList.add('vis');
+  document.getElementById('upz-main').style.opacity='.4';
+  setTimeout(()=>{
+    document.getElementById('ai-box').classList.remove('vis');
+    document.getElementById('upz-main').style.opacity='1';
+    document.getElementById('scan-panel').style.display='block';
+    calcTax();
+    toast('AI selesai ekstrak data — 98% confidence','success');
+  },2200);
+}
+
+function loadSample(k){
+  const d=SAMPLES[k];
+  document.getElementById('scan-panel').style.display='none';
+  document.getElementById('ai-box').classList.add('vis');
+  document.getElementById('upz-main').style.opacity='.4';
+  setTimeout(()=>{
+    document.getElementById('ai-box').classList.remove('vis');
+    document.getElementById('upz-main').style.opacity='1';
+    document.getElementById('scan-panel').style.display='block';
+    document.getElementById('f-no').value=d.no;
+    document.getElementById('f-date').value=d.date;
+    document.getElementById('f-vendor').value=d.vendor;
+    document.getElementById('f-npwp').value=d.npwp||'';
+    document.getElementById('f-dpp').value=d.dpp;
+    document.getElementById('f-tax').value=d.tax;
+    document.getElementById('f-acc').value=d.acc;
+    document.getElementById('f-desc').value=d.desc;
+    document.getElementById('f-type').value=d.kind;
+    calcTax();
+    toast('Data diekstrak dari '+d.vendor+' — 98% confidence','success');
+  },2000);
+}
+
+function taxAmt(dpp,t){
+  if(t==='ppn11')return Math.round(dpp*.11);
+  if(t==='pph23')return Math.round(dpp*.02);
+  if(t==='pph21')return Math.round(dpp*.05);
+  return 0;
+}
+function calcTax(){
+  const dpp=parseFloat(document.getElementById('f-dpp').value)||0;
+  const t=document.getElementById('f-tax').value;
+  const ta=taxAmt(dpp,t);
+  document.getElementById('f-taxamt').value=ta;
+  document.getElementById('f-total').value=dpp+ta;
+}
+
+function postEntry(){
+  const no=document.getElementById('f-no').value||'REF-'+Date.now();
+  const date=document.getElementById('f-date').value||'2026-06-28';
+  const vendor=document.getElementById('f-vendor').value||'Unknown';
+  const dpp=parseFloat(document.getElementById('f-dpp').value)||0;
+  const ta=parseFloat(document.getElementById('f-taxamt').value)||0;
+  const total=dpp+ta;
+  const taxT=document.getElementById('f-tax').value;
+  const kindV=document.getElementById('f-type').value;
+  const accEl=document.getElementById('f-acc');
+  const accTxt=accEl.options[accEl.selectedIndex].text.split('—')[0].trim();
+  const desc=document.getElementById('f-desc').value||vendor;
+  const jref='JE-'+(++ST.refs);
+  const isAR=kindV==='sales';
+  const kindLabel=isAR?'Penjualan':kindV==='expense'?'Pengeluaran':'Pembelian';
+  const taxLabel=taxT==='ppn11'?'PPN 11%':taxT==='pph23'?'PPh 23':taxT==='pph21'?'PPh 21':'Tanpa Pajak';
+
+  if(isAR){
+    addJ({ref:jref,srcRef:no,date,desc:`${no} — ${vendor}`,dr:total,cr:0,acc:'1100',src:'AUTO'});
+    addJ({ref:jref,srcRef:no,date,desc:`Pendapatan — ${no}`,dr:0,cr:dpp,acc:'4000',src:'AUTO'});
+    if(ta>0&&taxT==='ppn11'){ST.ppnOut+=ta;addJ({ref:jref,srcRef:no,date,desc:`PPN Keluaran — ${no}`,dr:0,cr:ta,acc:'2300',src:'AUTO'});}
+  }else{
+    addJ({ref:jref,srcRef:no,date,desc:`${no} — ${vendor}`,dr:dpp,cr:0,acc:accTxt,src:'AUTO'});
+    if(ta>0&&taxT==='ppn11'){ST.ppnIn+=ta;addJ({ref:jref,srcRef:no,date,desc:`PPN Masukan — ${no}`,dr:ta,cr:0,acc:'1300',src:'AUTO'});}
+    if(taxT==='pph23'){const p=Math.round(dpp*.02);ST.pph+=p;addJ({ref:jref,srcRef:no,date,desc:`PPh 23 — ${no}`,dr:0,cr:p,acc:'2400',src:'AUTO'});}
+    addJ({ref:jref,srcRef:no,date,desc:`Hutang — ${no}`,dr:0,cr:total,acc:'2100',src:'AUTO'});
+  }
+
+  TX_DB[no]={ref:no,date,party:vendor,npwp:document.getElementById('f-npwp').value||'—',kind:kindLabel,dpp,tax:ta,total,taxType:taxLabel,acc:accTxt,status:'Diposting',desc};
+  addTxRow({ref:no,date,party:vendor,kind:kindLabel,dpp,taxType:taxLabel,tax:ta,total,acc:accTxt});
+  updateTax();renderLedger();
+  toast(`${no} diposting — jurnal + pajak terupdate otomatis`,'success');
+  setTimeout(()=>{document.getElementById('scan-panel').style.display='none';},600);
+}
+
+// ── JOURNAL ──
+function addJ(j){
+  ST.journals.push(j);
+  const tb=document.getElementById('jrn-tb');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td><span class="acc-chip" style="font-size:11.5px">${j.ref}</span></td>
+    <td style="color:var(--ink3)">${j.date}</td>
+    <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${j.desc}</td>
+    <td style="color:${j.dr?'var(--blue-d)':'var(--ink3)'};font-weight:${j.dr?'600':'400'}">${j.dr?rp(j.dr):'—'}</td>
+    <td style="color:${j.cr?'var(--grn-d)':'var(--ink3)'};font-weight:${j.cr?'600':'400'}">${j.cr?rp(j.cr):'—'}</td>
+    <td><span class="acc-chip">${j.acc}</span></td>
+    <td><span class="tag ${j.src==='AUTO'?'tg':'tb'}" style="font-size:10.5px">${j.src}</span></td>
+    <td><button class="btn-link" onclick="openTxPanel('${j.srcRef||j.ref}')" style="font-size:12px">Detail →</button></td>`;
+  tb.appendChild(tr);
+  updateTrialBal();
+}
+
+function updateTrialBal(){
+  const dr=ST.journals.reduce((s,j)=>s+(j.dr||0),0);
+  const cr=ST.journals.reduce((s,j)=>s+(j.cr||0),0);
+  document.getElementById('tot-dr').textContent=rp(dr);
+  document.getElementById('tot-cr').textContent=rp(cr);
+  const el=document.getElementById('bal-st');
+  if(Math.abs(dr-cr)<1){el.textContent='✓ Seimbang';el.style.color='var(--grn-d)';}
+  else{el.textContent='⚠ Selisih '+rp(Math.abs(dr-cr));el.style.color='var(--red-d)';}
+}
+
+function renderLedger(){
+  const tb=document.getElementById('ldg-tb');tb.innerHTML='';
+  let b=0;
+  ST.journals.forEach(j=>{
+    b+=(j.dr||0)-(j.cr||0);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="color:var(--ink3)">${j.date}</td><td><span class="acc-chip" style="font-size:11px">${j.ref}</span></td>
+    <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${j.desc}</td>
+    <td style="color:var(--blue-d)">${j.dr?rp(j.dr):'—'}</td>
+    <td style="color:var(--grn-d)">${j.cr?rp(j.cr):'—'}</td>
+    <td style="font-weight:600">${rp(Math.abs(b))}</td>
+    <td><span class="acc-chip">${j.acc}</span></td>`;
+    tb.appendChild(tr);
+  });
+}
+function filterLedger(){renderLedger();}
+
+// ── TRANSACTIONS ──
+function addTxRow(d){
+  ST.txs.push(d);
+  const tb=document.getElementById('tx-tb');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td style="color:var(--ink3)">${d.date}</td>
+    <td><button class="btn-link" onclick="openTxPanel('${d.ref}')">${d.ref}</button></td>
+    <td>${kindTag(d.kind)}</td>
+    <td style="font-weight:500">${d.party}</td>
+    <td>${rp(d.dpp)}</td>
+    <td><span class="tag tp">${d.taxType}</span></td>
+    <td style="font-weight:600">${rp(d.total)}</td>
+    <td><span class="acc-chip">${d.acc}</span></td>
+    <td><span class="tag tg">Diposting</span></td>
+    <td><button class="btn-link" onclick="openTxPanel('${d.ref}')" style="font-size:12px">Detail →</button></td>`;
+  tb.appendChild(tr);
+}
+
+// ── TAX UPDATE ──
+function updateTax(){
+  document.getElementById('ppn-out').textContent=rp(ST.ppnOut);
+  document.getElementById('ppn-in').textContent=rp(ST.ppnIn);
+  document.getElementById('ppn-net').textContent=rp(Math.max(0,ST.ppnOut-ST.ppnIn));
+  document.getElementById('pph-amt').textContent=rp(ST.pph);
+  const ppnItems=ST.journals.filter(j=>j.acc==='2300'||j.acc==='1300');
+  if(ppnItems.length){
+    document.getElementById('ppn-list').innerHTML=ppnItems.map(j=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)">
+        <div><div style="font-weight:500;font-size:13px">${j.desc}</div><div style="font-size:11.5px;color:var(--ink3)">${j.date} · ${j.ref}</div></div>
+        <div style="text-align:right"><span class="tag ${j.acc==='2300'?'tg':'tr'}" style="font-size:10.5px">${j.acc==='2300'?'Keluaran':'Masukan'}</span><div style="font-weight:700;color:var(--teal-d);margin-top:3px">${rp(j.dr||j.cr)}</div></div>
+      </div>`).join('');
+  }
+}
+
+// ── CLIENTS ──
+function renderClients(){
+  const tb=document.getElementById('clients-tb');if(!tb)return;
+  tb.innerHTML=CLIENTS.map(c=>`
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:9px">
+        <div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:${c.plan==='pro'?'var(--pur-bg)':c.plan==='bisnis'?'var(--blue-bg)':'var(--grn-bg)'};color:${c.plan==='pro'?'var(--pur-d)':c.plan==='bisnis'?'var(--blue-d)':'var(--grn-d)'};flex-shrink:0">${c.name.substring(0,2).toUpperCase()}</div>
+        <div><div style="font-weight:500"><button class="btn-link" onclick="openClientPanel('${c.id}')">${c.name}</button></div><div style="font-size:11.5px;color:var(--ink3)">${c.legal}</div></div></div></td>
+      <td style="color:var(--ink3)">${c.type}</td>
+      <td>${planTag(c.plan)}</td>
+      <td style="font-family:monospace;font-size:12px;color:var(--ink3)">${c.npwp}</td>
+      <td style="color:var(--ink3)">${c.joined}</td>
+      <td style="font-weight:600">${c.pr}</td>
+      <td><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px">${c.docs}/${c.lim===999?'∞':c.lim}</span><div class="prog" style="max-width:50px;flex:1"><div class="progf" style="width:${Math.min(100,Math.round(c.docs/(c.lim===999?200:c.lim)*100))}%;background:var(--blue)"></div></div></div></td>
+      <td><span class="tag ${c.status==='Aktif'?'tg':c.status==='Trial'?'tb':'tr'}">${c.status}</span></td>
+      <td><button class="btn-link" onclick="openClientPanel('${c.id}')" style="font-size:12px">Detail →</button></td>
+    </tr>`).join('');
+}
+
+function openClientPanel(id){
+  const c=CLIENTS.find(x=>x.id===id);if(!c)return;
+  document.getElementById('ph-title').textContent=c.name;
+  document.getElementById('ph-acts').innerHTML=`<button class="btn btn-blue btn-xs" onclick="toast('Laporan ${c.name} dikirim','success')"><i class="ti ti-send"></i>Kirim laporan</button>`;
+  document.getElementById('pb').innerHTML=`
+    <div class="psec"><div class="psec-t">Info Klien</div>
+      <dl class="dl">
+        <dt>ID</dt><dd style="font-family:monospace">${c.id}</dd>
+        <dt>Nama</dt><dd style="font-weight:600">${c.name}</dd>
+        <dt>Jenis usaha</dt><dd>${c.type}</dd>
+        <dt>Badan hukum</dt><dd>${c.legal}</dd>
+        <dt>NPWP</dt><dd style="font-family:monospace">${c.npwp}</dd>
+        <dt>Bergabung</dt><dd>${c.joined}</dd>
+      </dl>
+    </div>
+    <div class="psec"><div class="psec-t">Paket dan Billing</div>
+      <dl class="dl">
+        <dt>Paket</dt><dd>${planTag(c.plan)}</dd>
+        <dt>Tagihan</dt><dd style="font-weight:700">${c.pr}/bulan</dd>
+        <dt>Status bayar</dt><dd><span class="tag ${c.billing==='Lunas'?'tg':c.billing==='Gratis'?'tb':'tr'}">${c.billing}</span></dd>
+      </dl>
+    </div>
+    <div class="psec"><div class="psec-t">Penggunaan Dokumen Bulan Ini</div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span>${c.docs} dokumen</span><span style="font-weight:600">${c.docs}/${c.lim===999?'∞':c.lim}</span></div>
+      <div class="prog"><div class="progf" style="width:${Math.min(100,Math.round(c.docs/(c.lim===999?200:c.lim)*100))}%;background:var(--grn)"></div></div>
+    </div>
+    <div class="psec"><div class="psec-t">Aksi Cepat</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-blue btn-sm" onclick="toast('Chat WA ke ${c.name} dibuka','info')"><i class="ti ti-message"></i>Chat WA klien</button>
+        <button class="btn btn-ghost btn-sm" onclick="toast('Laporan terakhir ${c.name} dibuka','info')"><i class="ti ti-chart-bar"></i>Lihat laporan terakhir</button>
+        <button class="btn btn-ghost btn-sm" onclick="toast('Invoice tagihan dibuat','success')"><i class="ti ti-file-invoice"></i>Buat invoice tagihan</button>
+        <button class="btn btn-ghost btn-sm" onclick="toast('Data klien diekspor','success')"><i class="ti ti-download"></i>Export data klien</button>
+      </div>
+    </div>`;
+  document.getElementById('panel-bg').classList.add('open');
+}
+
+function addClient(){
+  const name=document.getElementById('ob-name').value||'Klien Baru';
+  const planEl=document.getElementById('ob-plan');
+  const plan=planEl.value;
+  document.getElementById('wa-nm').textContent=name;
+  document.getElementById('wa-pk').textContent=planEl.options[planEl.selectedIndex].text.split('—')[0].trim();
+  CLIENTS.push({id:'C0'+(CLIENTS.length+1),name,type:document.getElementById('ob-type').value,legal:document.getElementById('ob-legal').value,npwp:document.getElementById('ob-npwp').value||'—',plan,pr:plan==='starter'?'Rp 299.000':plan==='bisnis'?'Rp 799.000':'Rp 2.500.000',joined:'Jul 2026',docs:0,lim:plan==='starter'?30:plan==='bisnis'?150:999,status:'Trial',billing:'—'});
+  renderClients();
+  toast(`${name} terdaftar! Welcome kit siap dikirim`,'success');
+}
+
+// ── DASHBOARD DATA ──
+function renderDashTx(){
+  const tb=document.getElementById('dash-tx-tb');if(!tb)return;
+  const data=[
+    {ref:'INV-2042',desc:'PT Maju Bersama — Software',amt:'+Rp 55.000.000',c:'var(--grn-d)',status:'tg'},
+    {ref:'EXP-0521',desc:'Tokopedia — Perlengkapan',amt:'-Rp 2.350.000',c:'var(--red-d)',status:'tg'},
+    {ref:'PAY-0218',desc:'Gaji Juni — 14 karyawan',amt:'-Rp 45.000.000',c:'var(--red-d)',status:'tg'},
+    {ref:'INV-2041',desc:'CV Digital Nusantara — Web',amt:'+Rp 28.600.000',c:'var(--grn-d)',status:'tg'},
+  ];
+  tb.innerHTML=data.map(d=>`<tr>
+    <td><button class="btn-link" onclick="openTxPanel('${d.ref}')" style="font-size:12.5px">${d.ref}</button></td>
+    <td style="color:var(--ink2)">${d.desc}</td>
+    <td style="font-weight:600;color:${d.c}">${d.amt}</td>
+    <td><span class="tag ${d.status}">Diposting</span></td>
+  </tr>`).join('');
+}
+
+// ── CHART ──
+function renderChart(){
+  const c=document.getElementById('main-chart');if(!c)return;
+  const mos=['Jan','Feb','Mar','Apr','Mei','Jun'];
+  const rev=[210,195,240,268,255,284];
+  const exp=[120,115,135,148,138,142];
+  const mx=Math.max(...rev);
+  c.innerHTML=mos.map((m,i)=>`
+    <div class="bar-col">
+      <div class="bar-wrap">
+        <div class="bar" style="height:${Math.round((rev[i]/mx)*84)}px;background:var(--blue)"></div>
+        <div class="bar" style="height:${Math.round((exp[i]/mx)*84)}px;background:#fca5a5"></div>
+      </div>
+      <div class="bar-lbl">${m}</div>
+    </div>`).join('');
+}
+
+// ── SEED DATA ──
+function seedData(){
+  const seed=[
+    {ref:'JE-1001',srcRef:'INV-2042',date:'28 Jun 26',desc:'INV-2042 — PT Maju Bersama',dr:55000000,cr:0,acc:'1100',src:'AUTO'},
+    {ref:'JE-1001',srcRef:'INV-2042',date:'28 Jun 26',desc:'Pendapatan — INV-2042',dr:0,cr:49549550,acc:'4000',src:'AUTO'},
+    {ref:'JE-1001',srcRef:'INV-2042',date:'28 Jun 26',desc:'PPN Keluaran — INV-2042',dr:0,cr:5450450,acc:'2300',src:'AUTO'},
+    {ref:'JE-1002',srcRef:'EXP-0521',date:'27 Jun 26',desc:'EXP-0521 — Tokopedia',dr:2117117,cr:0,acc:'6100',src:'AUTO'},
+    {ref:'JE-1002',srcRef:'EXP-0521',date:'27 Jun 26',desc:'PPN Masukan — EXP-0521',dr:232883,cr:0,acc:'1300',src:'AUTO'},
+    {ref:'JE-1002',srcRef:'EXP-0521',date:'27 Jun 26',desc:'Hutang — EXP-0521',dr:0,cr:2350000,acc:'2100',src:'AUTO'},
+    {ref:'JE-1003',srcRef:'PAY-0218',date:'26 Jun 26',desc:'Gaji Juni 2026',dr:45000000,cr:0,acc:'5100',src:'AUTO'},
+    {ref:'JE-1003',srcRef:'PAY-0218',date:'26 Jun 26',desc:'PPh 21 — PAY-0218',dr:0,cr:2250000,acc:'2400',src:'AUTO'},
+    {ref:'JE-1003',srcRef:'PAY-0218',date:'26 Jun 26',desc:'Kas — PAY-0218',dr:0,cr:42750000,acc:'1000',src:'AUTO'},
+    {ref:'JE-1004',srcRef:'INV-2041',date:'25 Jun 26',desc:'INV-2041 — CV Digital Nusantara',dr:28600000,cr:0,acc:'1100',src:'AUTO'},
+    {ref:'JE-1004',srcRef:'INV-2041',date:'25 Jun 26',desc:'Pendapatan — INV-2041',dr:0,cr:25765765,acc:'4000',src:'AUTO'},
+    {ref:'JE-1004',srcRef:'INV-2041',date:'25 Jun 26',desc:'PPN Keluaran — INV-2041',dr:0,cr:2834235,acc:'2300',src:'AUTO'},
+  ];
+  seed.forEach(j=>addJ(j));
+  const txSeed=[
+    {ref:'INV-2042',date:'28 Jun 26',party:'PT Maju Bersama',kind:'Penjualan',dpp:49549550,taxType:'PPN 11%',tax:5450450,total:55000000,acc:'1100'},
+    {ref:'EXP-0521',date:'27 Jun 26',party:'Tokopedia',kind:'Pengeluaran',dpp:2117117,taxType:'PPN 11%',tax:232883,total:2350000,acc:'6100'},
+    {ref:'PAY-0218',date:'26 Jun 26',party:'14 Karyawan',kind:'Penggajian',dpp:45000000,taxType:'PPh 21',tax:2250000,total:45000000,acc:'5100'},
+    {ref:'INV-2041',date:'25 Jun 26',party:'CV Digital Nusantara',kind:'Penjualan',dpp:25765765,taxType:'PPN 11%',tax:2834235,total:28600000,acc:'4000'},
+  ];
+  txSeed.forEach(t=>addTxRow(t));
+  ST.ppnOut=5450450+2834235; ST.ppnIn=232883; ST.pph=2250000;
+  updateTax(); renderLedger(); renderClients(); renderDashTx(); renderChart();
+}
+
+seedData();
+
+// ═══ KAS & BANK ═══
+const KB_DATA={
+  op:{banks:[
+    {nm:'BCA 123-456-7890',bank:'Bank BCA',tipe:'Giro',saldo:45800000,upd:'28 Jun 26'},
+    {nm:'Mandiri 0987-654',bank:'Bank Mandiri',tipe:'Tabungan',saldo:12500000,upd:'28 Jun 26'},
+    {nm:'Kas Tunai',bank:'—',tipe:'Petty Cash',saldo:2000000,upd:'28 Jun 26'},
+  ],kpi:{total:60300000,in:15600000,out:8200000,n:3}},
+  cl:{banks:[
+    {nm:'BCA 555-111-2222',bank:'Bank BCA',tipe:'Giro',saldo:122300000,upd:'28 Jun 26'},
+    {nm:'Kas Toko',bank:'—',tipe:'Petty Cash',saldo:3500000,upd:'28 Jun 26'},
+  ],kpi:{total:125800000,in:84100000,out:92000000,n:2}}
+};
+const KB_MUTASI=[
+  {tgl:'28 Jun',ket:'Transfer PT Maju Bersama',ref:'JE-1001',dr:0,cr:55000000,sld:177300000,rek:'BCA 555...'},
+  {tgl:'27 Jun',ket:'Belanja Tokopedia',ref:'JE-1002',dr:2350000,cr:0,sld:122300000,rek:'BCA 555...'},
+  {tgl:'26 Jun',ket:'Gaji karyawan Juni',ref:'JE-1003',dr:42750000,cr:0,sld:124650000,rek:'BCA 555...'},
+  {tgl:'25 Jun',ket:'Transfer CV Digital Nusantara',ref:'JE-1004',dr:0,cr:28600000,sld:167400000,rek:'BCA 555...'},
+];
+let kbEnt='op';
+function setKBEnt(e,btn){
+  kbEnt=e;
+  document.getElementById('kb-op').className='btn btn-blue btn-sm';
+  document.getElementById('kb-cl').className='btn btn-ghost btn-sm';
+  btn.className='btn btn-blue btn-sm';
+  renderKB();
+}
+function renderKB(){
+  const d=KB_DATA[kbEnt],k=d.kpi;
+  document.getElementById('kb-kpi').innerHTML=`
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Total saldo</div><div class="kpi-val" style="color:var(--blue-d)">${rp(k.total)}</div><div class="kpi-sub">${k.n} rekening/kas</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--grn)"></div><div class="kpi-lbl">Penerimaan bulan ini</div><div class="kpi-val" style="color:var(--grn-d)">${rp(k.in)}</div><div class="kpi-sub up">Inflow Juni</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Pengeluaran bulan ini</div><div class="kpi-val" style="color:var(--red-d)">${rp(k.out)}</div><div class="kpi-sub">Outflow Juni</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--teal)"></div><div class="kpi-lbl">Net cash flow</div><div class="kpi-val" style="color:${k.in>k.out?'var(--grn-d)':' var(--red-d)'}">${rp(k.in-k.out)}</div><div class="kpi-sub">Juni 2026</div></div>`;
+  document.getElementById('kb-bank-tb').innerHTML=d.banks.map(b=>`
+    <tr><td style="font-weight:500">${b.nm}</td><td>${b.bank}</td>
+    <td><span class="tag tgr">${b.tipe}</span></td>
+    <td style="font-weight:600;color:var(--blue-d)">${rp(b.saldo)}</td>
+    <td style="color:var(--ink3)">${b.upd}</td>
+    <td><div style="display:flex;gap:5px">
+      <button class="btn btn-ghost btn-xs" onclick="toast('Mutasi ${b.nm} dibuka','info')"><i class="ti ti-list"></i></button>
+      <button class="btn btn-ghost btn-xs" onclick="toast('Rekonsiliasi bank dibuka','info')"><i class="ti ti-git-merge"></i></button>
+    </div></td></tr>`).join('');
+  document.getElementById('kb-mutasi-tb').innerHTML=KB_MUTASI.map(m=>`
+    <tr><td style="color:var(--ink3)">${m.tgl}</td><td>${m.ket}</td>
+    <td><span class="acc-chip">${m.ref}</span></td>
+    <td style="color:var(--red-d);font-weight:500">${m.dr?rp(m.dr):'—'}</td>
+    <td style="color:var(--grn-d);font-weight:500">${m.cr?rp(m.cr):'—'}</td>
+    <td style="font-weight:500">${rp(m.sld)}</td>
+    <td style="color:var(--ink3)">${m.rek}</td>
+    <td><span class="tag tg">Diposting</span></td></tr>`).join('');
+}
+function startKBScan(){
+  toast('AI sedang membaca rekening koran...','info');
+  setTimeout(()=>{document.getElementById('kb-scan-res').style.display='block';toast('47 mutasi berhasil diekstrak — confidence 96%','success');},2000);
+}
+
+// ═══ ASET TETAP ═══
+const AL_ASSETS=[
+  {code:'AST-001',name:'Server Dell PowerEdge R740',cat:'IT & Komputer',date:'1 Jan 2024',cost:50000000,resid:5000000,life:5,method:'sl',acc:18000000,loc:'Server room',serial:'SN-DELL-7840293',status:'Aktif'},
+  {code:'AST-002',name:'Mobil Toyota Avanza',cat:'Kendaraan',date:'1 Jul 2023',cost:200000000,resid:20000000,life:8,method:'sl',acc:33750000,loc:'Pool kendaraan',serial:'B-1234-XYZ',status:'Aktif'},
+  {code:'AST-003',name:'AC Daikin Inverter 2PK (x3)',cat:'Peralatan',date:'1 Mar 2025',cost:15000000,resid:1500000,life:5,method:'sl',acc:3825000,loc:'Kantor pusat',serial:'DAIKIN-2025-3x',status:'Aktif'},
+  {code:'AST-004',name:'Meja Kantor Ergonomis (x10)',cat:'Perlengkapan',date:'1 Jun 2025',cost:8000000,resid:0,life:4,method:'sl',acc:1000000,loc:'Kantor pusat',serial:'MEJA-KTR-10',status:'Aktif'},
+];
+let alEnt='op',alFilter='';
+function setALEnt(e,btn){
+  alEnt=e;
+  document.getElementById('al-op').className='btn btn-blue btn-sm';
+  document.getElementById('al-cl').className='btn btn-ghost btn-sm';
+  btn.className='btn btn-blue btn-sm';
+  renderAL();
+}
+function filterAL(v){alFilter=v;renderAL();}
+function renderAL(){
+  const list=alFilter?AL_ASSETS.filter(a=>a.cat===alFilter):AL_ASSETS;
+  const tCost=list.reduce((s,a)=>s+a.cost,0);
+  const tAcc=list.reduce((s,a)=>s+a.acc,0);
+  const tNBV=list.reduce((s,a)=>s+(a.cost-a.acc),0);
+  document.getElementById('al-kpi').innerHTML=`
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Harga perolehan</div><div class="kpi-val" style="color:var(--blue-d)">${rp(tCost)}</div><div class="kpi-sub">${list.length} aset aktif</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amb)"></div><div class="kpi-lbl">Akum. penyusutan</div><div class="kpi-val" style="color:var(--amb-d)">${rp(tAcc)}</div><div class="kpi-sub">Kumulatif</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--grn)"></div><div class="kpi-lbl">Nilai buku (NBV)</div><div class="kpi-val" style="color:var(--grn-d)">${rp(tNBV)}</div><div class="kpi-sub">Per Juni 2026</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--pur)"></div><div class="kpi-lbl">Rasio penyusutan</div><div class="kpi-val" style="color:var(--pur-d)">${Math.round(tAcc/tCost*100)}%</div><div class="kpi-sub">Dari harga perolehan</div></div>`;
+  document.getElementById('al-tb').innerHTML=list.map((a,i)=>{
+    const nbv=a.cost-a.acc;
+    const ann=(a.cost-a.resid)/a.life;
+    const rem=Math.round((nbv-a.resid)/ann*10)/10;
+    return`<tr>
+      <td><span class="acc-chip">${a.code}</span></td>
+      <td style="font-weight:500;cursor:pointer;color:var(--blue-d)" onclick="goOp('kartuaset',null);document.getElementById('ka-sel').value=${i};renderKartu(${i})">${a.name}</td>
+      <td><span class="tag tgr">${a.cat}</span></td>
+      <td style="color:var(--ink3)">${a.date}</td>
+      <td>${rp(a.cost)}</td>
+      <td style="color:var(--amb-d);font-weight:500">${rp(a.acc)}</td>
+      <td style="font-weight:600;color:var(--blue-d)">${rp(nbv)}</td>
+      <td><span class="tag tgr">${a.method==='sl'?'Garis lurus':'Saldo menurun'}</span></td>
+      <td style="color:var(--ink3)">${rem} thn</td>
+      <td><span class="tag tg">${a.status}</span></td>
+      <td><div style="display:flex;gap:4px">
+        <button class="btn btn-ghost btn-xs" onclick="goOp('kartuaset',null);document.getElementById('ka-sel').value=${i};renderKartu(${i})" title="Kartu aset"><i class="ti ti-id-badge-2"></i></button>
+        <button class="btn btn-ghost btn-xs" onclick="toast('${a.code} dibuka untuk edit','info')" title="Edit"><i class="ti ti-edit"></i></button>
+        <button class="btn btn-ghost btn-xs" onclick="goOp('disposal',null)" title="Disposal"><i class="ti ti-trash"></i></button>
+      </div></td></tr>`;}).join('');
+}
+
+function previewDepr(){
+  const cost=parseFloat(document.getElementById('na-cost').value)||0;
+  const resid=parseFloat(document.getElementById('na-resid').value)||0;
+  const life=parseInt(document.getElementById('na-life').value)||5;
+  const method=document.getElementById('na-method').value;
+  const ann=method==='sl'?(cost-resid)/life:cost*(2/life);
+  document.getElementById('na-prev-val').textContent=ann>0?rp(ann)+'/tahun  ('+rp(ann/12)+'/bulan)':'—';
+  document.getElementById('na-prev-sub').textContent=method==='sl'?`(${rp(cost)} − ${rp(resid)}) ÷ ${life} tahun`:`${rp(cost)} × ${Math.round(200/life)}% (saldo menurun)`;
+}
+
+function addNewAsset(){
+  const name=document.getElementById('na-name').value;
+  if(!name){toast('Nama aset wajib diisi','info');return;}
+  const cost=parseFloat(document.getElementById('na-cost').value)||0;
+  const resid=parseFloat(document.getElementById('na-resid').value)||0;
+  const life=parseInt(document.getElementById('na-life').value)||5;
+  const cat=document.getElementById('na-cat').value;
+  const method=document.getElementById('na-method').value;
+  const code='AST-00'+(AL_ASSETS.length+1);
+  AL_ASSETS.push({code,name,cat,date:document.getElementById('na-date').value,cost,resid,life,method,acc:0,loc:document.getElementById('na-loc').value||'—',serial:'—',status:'Aktif'});
+  document.getElementById('add-asset-modal').style.display='none';
+  renderAL();
+  toast(code+' — '+name+' ditambahkan. Jurnal perolehan diposting otomatis.','success');
+}
+
+// ═══ PENYUSUTAN ═══
+function renderDeprPage(){
+  const monthly=AL_ASSETS.reduce((s,a)=>s+(a.cost-a.resid)/a.life/12,0);
+  const annual=monthly*12;
+  document.getElementById('dp-kpi').innerHTML=`
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amb)"></div><div class="kpi-lbl">Beban penyusutan/bln</div><div class="kpi-val" style="color:var(--amb-d)">${rp(monthly)}</div><div class="kpi-sub">Juni 2026</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Beban penyusutan/thn</div><div class="kpi-val" style="color:var(--red-d)">${rp(annual)}</div><div class="kpi-sub">FY 2026</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--grn)"></div><div class="kpi-lbl">Total NBV semua aset</div><div class="kpi-val" style="color:var(--grn-d)">${rp(AL_ASSETS.reduce((s,a)=>s+(a.cost-a.acc),0))}</div><div class="kpi-sub">Nilai buku bersih</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Aset aktif</div><div class="kpi-val" style="color:var(--blue-d)">${AL_ASSETS.length}</div><div class="kpi-sub">Sedang disusutkan</div></div>`;
+  renderDeprSched(0);
+  document.getElementById('dp-monthly-tb').innerHTML=AL_ASSETS.map(a=>{
+    const m=(a.cost-a.resid)/a.life/12;
+    return`<tr><td><span class="acc-chip">${a.code}</span></td><td>${a.name}</td>
+    <td><span class="tag tgr">${a.method==='sl'?'Garis lurus':'Saldo menurun'}</span></td>
+    <td style="color:var(--amb-d);font-weight:500">${rp(m)}</td>
+    <td><span class="acc-chip">6200</span></td><td><span class="acc-chip">1600</span></td></tr>`;}).join('');
+  document.getElementById('dp-total').textContent=rp(monthly);
+  const jrns=[
+    {tgl:'30 Jun 26',ref:'DEP-JUN-26',ket:'Beban penyusutan Juni 2026 — semua aset',v:monthly},
+    {tgl:'31 Mei 26',ref:'DEP-MEI-26',ket:'Beban penyusutan Mei 2026',v:monthly},
+    {tgl:'30 Apr 26',ref:'DEP-APR-26',ket:'Beban penyusutan April 2026',v:monthly},
+  ];
+  document.getElementById('dp-jrn-tb').innerHTML=jrns.map(j=>`
+    <tr><td style="color:var(--ink3)">${j.tgl}</td><td><span class="acc-chip">${j.ref}</span></td>
+    <td>${j.ket}</td>
+    <td style="color:var(--blue-d);font-weight:500">${rp(j.v)}</td>
+    <td style="color:var(--grn-d);font-weight:500">${rp(j.v)}</td>
+    <td><span class="acc-chip" style="display:block;margin-bottom:2px">6200-Beban Penyusutan</span><span class="acc-chip">1600-Akum. Penyusutan</span></td>
+    <td><span class="tag tg">Diposting</span></td></tr>`).join('');
+}
+
+function renderDeprSched(idx){
+  const a=AL_ASSETS[parseInt(idx)];if(!a)return;
+  const ann=(a.cost-a.resid)/a.life;
+  const startYr=parseInt(a.date.split(' ').pop())||2024;
+  let bv=a.cost,rows='';
+  for(let i=0;i<a.life;i++){
+    const yr=startYr+i;
+    const curr=yr===2026;
+    const past=yr<2026;
+    rows+=`<tr><td>${yr}</td><td>${rp(bv)}</td>
+    <td style="color:var(--amb-d);font-weight:500">${rp(ann)}</td>
+    <td>${rp(Math.min(a.cost-a.resid,(i+1)*ann))}</td>
+    <td style="font-weight:500;color:var(--blue-d)">${rp(Math.max(a.resid,bv-ann))}</td></tr>`;
+    bv=Math.max(a.resid,bv-ann);
+  }
+  document.getElementById('dp-sched-tb').innerHTML=rows;
+}
+
+// ═══ DISPOSAL ═══
+function calcDisp(){
+  const sel=document.getElementById('disp-sel');
+  const val=sel.value;
+  const prev=document.getElementById('disp-prev');
+  if(!val){prev.style.display='none';return;}
+  const [bvStr,name]=val.split('|');
+  const bv=parseFloat(bvStr)||0;
+  const price=parseFloat(document.getElementById('disp-price').value)||0;
+  const gl=price-bv;
+  const isGain=gl>=0;
+  prev.style.display='block';
+  prev.style.background=isGain?'var(--grn-bg)':'var(--amb-bg)';
+  prev.style.color=isGain?'var(--grn-d)':'var(--amb-d)';
+  prev.style.border=`1px solid ${isGain?'var(--grn-t)':'var(--amb-t)'}`;
+  prev.style.borderRadius='8px';
+  prev.innerHTML=`<div style="font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:8px">Preview jurnal disposal: ${name}</div>
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:5px 16px;font-size:13px">
+      <span style="color:var(--ink2)">Nilai buku saat ini</span><span style="text-align:right;font-weight:500">${rp(bv)}</span>
+      <span style="color:var(--ink2)">Harga jual/disposal</span><span style="text-align:right;font-weight:500">${rp(price)}</span>
+      <span style="font-weight:600">${isGain?'Keuntungan':'Kerugian'} pelepasan</span><span style="text-align:right;font-weight:700">${rp(Math.abs(gl))}</span>
+    </div>
+    <div style="font-size:12px;margin-top:8px;opacity:.8">Jurnal: hapus aset + akum. penyusutan → catat ${isGain?'laba':'rugi'} pelepasan</div>`;
+}
+
+function doDisposal(){
+  const val=document.getElementById('disp-sel').value;
+  if(!val){toast('Pilih aset yang akan di-disposal','info');return;}
+  const name=val.split('|')[1];
+  toast(name+' di-disposal. Jurnal diposting otomatis.','success');
+  document.getElementById('disp-sel').selectedIndex=0;
+  document.getElementById('disp-price').value=0;
+  document.getElementById('disp-prev').style.display='none';
+}
+
+// ═══ KARTU ASET ═══
+function renderKartu(idx){
+  const a=AL_ASSETS[parseInt(idx)];if(!a)return;
+  const nbv=a.cost-a.acc;
+  const ann=(a.cost-a.resid)/a.life;
+  const pct=Math.round(a.acc/a.cost*100);
+  document.getElementById('ka-info').innerHTML=`
+    <dt style="color:var(--ink3)">Kode aset</dt><dd style="font-family:monospace;text-align:right;font-weight:500">${a.code}</dd>
+    <dt style="color:var(--ink3)">Nama</dt><dd style="font-weight:600;text-align:right">${a.name}</dd>
+    <dt style="color:var(--ink3)">Kategori</dt><dd style="text-align:right">${a.cat}</dd>
+    <dt style="color:var(--ink3)">Tgl perolehan</dt><dd style="text-align:right">${a.date}</dd>
+    <dt style="color:var(--ink3)">Serial / ID</dt><dd style="font-family:monospace;font-size:11.5px;text-align:right">${a.serial}</dd>
+    <dt style="color:var(--ink3)">Lokasi</dt><dd style="text-align:right">${a.loc}</dd>
+    <dt style="color:var(--ink3)">Metode</dt><dd style="text-align:right">${a.method==='sl'?'Garis lurus':'Saldo menurun'}</dd>
+    <dt style="color:var(--ink3)">Umur ekonomis</dt><dd style="text-align:right">${a.life} tahun</dd>`;
+  document.getElementById('ka-depr').innerHTML=`
+    <dt style="color:var(--ink3)">Harga perolehan</dt><dd style="text-align:right;font-weight:500">${rp(a.cost)}</dd>
+    <dt style="color:var(--ink3)">Nilai residu</dt><dd style="text-align:right">${rp(a.resid)}</dd>
+    <dt style="color:var(--ink3)">Penyusutan/tahun</dt><dd style="text-align:right;font-weight:500;color:var(--amb-d)">${rp(ann)}</dd>
+    <dt style="color:var(--ink3)">Penyusutan/bulan</dt><dd style="text-align:right;color:var(--amb-d)">${rp(ann/12)}</dd>
+    <dt style="color:var(--ink3)">Akum. penyusutan</dt><dd style="text-align:right;font-weight:600;color:var(--amb-d)">${rp(a.acc)}</dd>
+    <dt style="color:var(--ink3)">Nilai buku (NBV)</dt><dd style="text-align:right;font-weight:700;color:var(--blue-d)">${rp(nbv)}</dd>`;
+  document.getElementById('ka-pct').textContent=pct+'%';
+  document.getElementById('ka-bar').style.width=pct+'%';
+  const startYr=parseInt(a.date.split(' ').pop())||2024;
+  let bv=a.cost,rows='';
+  for(let i=0;i<a.life;i++){
+    const yr=startYr+i;
+    const curr=yr===2026,past=yr<2026;
+    rows+=`<tr><td>${yr}</td><td>${rp(bv)}</td>
+    <td style="color:var(--amb-d);font-weight:500">${rp(ann)}</td>
+    <td>${rp(Math.min(a.cost-a.resid,(i+1)*ann))}</td>
+    <td style="font-weight:500;color:var(--blue-d)">${rp(Math.max(a.resid,bv-ann))}</td>
+    <td><span class="tag ${past?'tg':curr?'tb':'tgr'}">${past?'Selesai':curr?'Berjalan':'Mendatang'}</span></td></tr>`;
+    bv=Math.max(a.resid,bv-ann);
+  }
+  document.getElementById('ka-sched-tb').innerHTML=rows;
+}
+
+// ═══ A/R & A/P PER ENTITAS ═══ (added to existing openTxPanel)
+// extend goOp to auto-init new pages
+const _origGoOp=goOp;
+// patch: renderKB, renderAL, renderDeprPage on first visit
+const _pgInited={};
+const _goOpPatched=function(pg,el){
+  _origGoOp(pg,el);
+  if(!_pgInited[pg]){
+    _pgInited[pg]=true;
+    if(pg==='kasbank')renderKB();
+    if(pg==='assetlist')renderAL();
+    if(pg==='penyusutan')renderDeprPage();
+    if(pg==='kartuaset')renderKartu(0);
+  }
+};
+// override goOp
+window.goOp=_goOpPatched;
+renderKB();
+renderAL();
+renderDeprPage();
+renderKartu(0);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+[phases.build]
+cmds = ["npx prisma generate"]
+
+[start]
+cmd = "node backend/server.js"

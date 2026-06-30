@@ -1,0 +1,166 @@
+# 🚀 Panduan Deploy FinTrack Pro ke Internet
+# Untuk Mac — Tidak perlu paham coding
+# Waktu: ±30-45 menit
+
+═══════════════════════════════════════════════════════
+BAGIAN 1 — PERSIAPAN (lakukan sekali saja)
+═══════════════════════════════════════════════════════
+
+LANGKAH 1: Install Homebrew (tool installer untuk Mac)
+────────────────────────────────────────────────────
+1. Buka Terminal (Command+Spasi → ketik "Terminal" → Enter)
+2. Copy-paste perintah ini, tekan Enter:
+
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+3. Ikuti instruksi di layar. Mungkin minta password Mac kamu → ketik lalu Enter
+4. Tunggu sampai selesai (5-10 menit)
+
+LANGKAH 2: Install Node.js (untuk menjalankan server)
+────────────────────────────────────────────────────
+1. Di Terminal, copy-paste:
+
+brew install node
+
+2. Tunggu selesai
+3. Verifikasi dengan ketik: node --version
+   Harus muncul angka seperti: v20.x.x ✅
+
+LANGKAH 3: Install Railway CLI (tool deploy)
+────────────────────────────────────────────────────
+1. Di Terminal, copy-paste:
+
+npm install -g @railway/cli
+
+2. Tunggu selesai
+
+LANGKAH 4: Login Railway dari Terminal
+────────────────────────────────────────────────────
+1. Di Terminal, ketik:
+
+railway login
+
+2. Browser akan terbuka → login dengan akun GitHub kamu
+3. Kembali ke Terminal → akan muncul "Logged in" ✅
+
+═══════════════════════════════════════════════════════
+BAGIAN 2 — SETUP PROJECT (lakukan sekali saja)
+═══════════════════════════════════════════════════════
+
+LANGKAH 5: Pindah ke folder project FinTrack Pro
+────────────────────────────────────────────────────
+1. Download file ZIP dari Claude (yang akan diberikan)
+2. Extract ke Desktop
+3. Di Terminal, ketik:
+
+cd ~/Desktop/fintrack_app
+
+4. Tekan Enter
+
+LANGKAH 6: Install dependencies
+────────────────────────────────────────────────────
+1. Masih di Terminal, ketik:
+
+npm install
+
+2. Tunggu sampai selesai (2-3 menit)
+
+LANGKAH 7: Setup project di Railway
+────────────────────────────────────────────────────
+1. Di Terminal, ketik:
+
+railway init
+
+2. Pilih "Create new project"
+3. Beri nama: fintrack-pro
+
+LANGKAH 8: Tambah database PostgreSQL
+────────────────────────────────────────────────────
+1. Buka browser → railway.app → login
+2. Klik project "fintrack-pro" yang baru dibuat
+3. Klik "+ New" → pilih "Database" → pilih "PostgreSQL"
+4. Tunggu database terbuat ✅
+
+LANGKAH 9: Set environment variables di Railway
+────────────────────────────────────────────────────
+1. Di Railway dashboard → klik service "fintrack-pro"
+2. Klik tab "Variables"
+3. Klik "Add Variable" untuk setiap variabel berikut:
+
+   Nama                  | Nilai
+   ─────────────────────────────────────────────────
+   JWT_SECRET            | (ketik 32+ karakter acak bebas)
+   SESSION_SECRET        | (ketik 32+ karakter acak lain)
+   ADMIN_EMAIL           | email kamu untuk login admin
+   ADMIN_PASSWORD        | password admin (min 8 karakter)
+   ANTHROPIC_API_KEY     | (lihat langkah 10)
+   NODE_ENV              | production
+
+LANGKAH 10: Dapatkan Anthropic API Key (untuk AI scanner)
+────────────────────────────────────────────────────
+1. Buka: console.anthropic.com
+2. Daftar akun (gratis)
+3. Klik "API Keys" → "Create Key"
+4. Copy key-nya → paste ke Railway sebagai ANTHROPIC_API_KEY
+
+   ⚠️  PENTING: Anthropic memberikan $5 kredit gratis untuk mulai.
+   Biaya per scan invoice: ±$0.01-0.03 (sangat murah)
+
+═══════════════════════════════════════════════════════
+BAGIAN 3 — DEPLOY (kapanpun ada update)
+═══════════════════════════════════════════════════════
+
+LANGKAH 11: Deploy ke internet
+────────────────────────────────────────────────────
+1. Di Terminal (pastikan masih di folder fintrack_app):
+
+railway up
+
+2. Tunggu proses deploy (3-5 menit)
+3. Akan muncul URL seperti: https://fintrack-pro-xxx.railway.app
+4. Buka URL itu di browser — sistem sudah online! 🎉
+
+LANGKAH 12: Setup domain sendiri (opsional)
+────────────────────────────────────────────────────
+1. Beli domain di niagahoster.co.id atau dewaweb.com
+   Contoh: fintrackpro.id → ±Rp 150rb/tahun
+2. Di Railway → Settings → Domains → "Add Custom Domain"
+3. Ikuti instruksi DNS yang diberikan Railway
+
+═══════════════════════════════════════════════════════
+BAGIAN 4 — SETELAH DEPLOY
+═══════════════════════════════════════════════════════
+
+Login pertama kali:
+  URL    : https://fintrack-pro-xxx.railway.app
+  Email  : (yang kamu set di ADMIN_EMAIL)
+  Password: (yang kamu set di ADMIN_PASSWORD)
+
+Update sistem (kalau ada perubahan dari Claude):
+  1. Copy file baru ke folder fintrack_app
+  2. Di Terminal: railway up
+  3. Selesai! ±3 menit
+
+Biaya bulanan Railway:
+  - Plan gratis: cukup untuk mulai (500 jam/bulan)
+  - Plan Hobby ($5/bulan): untuk penggunaan aktif
+  - Plan Pro ($20/bulan): kalau sudah punya banyak klien
+
+═══════════════════════════════════════════════════════
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════
+
+❌ "command not found: railway"
+→ Ulangi Langkah 3
+
+❌ "Cannot connect to database"
+→ Pastikan PostgreSQL sudah ditambahkan di Railway (Langkah 8)
+→ Pastikan DATABASE_URL sudah terisi otomatis di Variables
+
+❌ "Invalid API key"
+→ Cek ANTHROPIC_API_KEY di Railway Variables
+
+❌ Lupa URL Railway:
+→ railway.app → login → klik project → Deployments → klik URL
+
+Butuh bantuan? Tanya Claude kapan saja! 😊

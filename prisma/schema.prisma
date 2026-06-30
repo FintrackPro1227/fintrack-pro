@@ -1,0 +1,570 @@
+// FinTrack Pro — Database Schema
+// Prisma ORM with PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ═══════════════════════════════════════
+// USERS & AUTH
+// ═══════════════════════════════════════
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  password    String
+  name        String
+  role        UserRole @default(OPERATOR)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  clientProfile Client? @relation("ClientUser")
+  operatedClients Client[] @relation("AssignedOperator")
+  journalEntries JournalEntry[]
+  documents     Document[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  SUPERADMIN
+  OPERATOR
+  ACCOUNTANT
+  CLIENT
+}
+
+// ═══════════════════════════════════════
+// COMPANIES (FinTrack Pro itself + clients)
+// ═══════════════════════════════════════
+model Company {
+  id          String      @id @default(cuid())
+  name        String
+  type        CompanyType @default(CLIENT)
+  legalForm   String?     // PT, CV, UD, Perorangan
+  npwp        String?
+  pkpStatus   Boolean     @default(false)
+  address     String?
+  phone       String?
+  email       String?
+  fiscalYear  Int         @default(12) // month fiscal year ends
+  currency    String      @default("IDR")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  client          Client?
+  accounts        Account[]
+  transactions    Transaction[]
+  journalEntries  JournalEntry[]
+  assets          Asset[]
+  bankAccounts    BankAccount[]
+  taxReports      TaxReport[]
+  documents       Document[]
+  budgets         Budget[]
+
+  @@map("companies")
+}
+
+enum CompanyType {
+  OPERATOR   // FinTrack Pro itself
+  CLIENT     // client businesses
+}
+
+// ═══════════════════════════════════════
+// CLIENTS
+// ═══════════════════════════════════════
+model Client {
+  id          String      @id @default(cuid())
+  companyId   String      @unique
+  userId      String?     @unique  // portal login
+  plan        ClientPlan  @default(BISNIS)
+  status      ClientStatus @default(TRIAL)
+  picName     String
+  picPhone    String
+  picEmail    String
+  joinDate    DateTime    @default(now())
+  nextBilling DateTime?
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  company     Company     @relation(fields: [companyId], references: [id])
+  user        User?       @relation("ClientUser", fields: [userId], references: [id])
+  operator    User?       @relation("AssignedOperator", fields: [operatorId], references: [id])
+  operatorId  String?
+  invoices    ClientInvoice[]
+  reports     Report[]
+
+  @@map("clients")
+}
+
+enum ClientPlan {
+  STARTER   // Rp 299.000
+  BISNIS    // Rp 799.000
+  PRO       // Rp 2.500.000
+}
+
+enum ClientStatus {
+  TRIAL
+  ACTIVE
+  SUSPENDED
+  CHURNED
+}
+
+// ═══════════════════════════════════════
+// CHART OF ACCOUNTS
+// ═══════════════════════════════════════
+model Account {
+  id          String      @id @default(cuid())
+  companyId   String
+  code        String
+  name        String
+  type        AccountType
+  category    String
+  normalBalance NormalBalance @default(DEBIT)
+  isActive    Boolean     @default(true)
+  parentId    String?
+  createdAt   DateTime    @default(now())
+
+  // Relations
+  company     Company     @relation(fields: [companyId], references: [id])
+  parent      Account?    @relation("SubAccounts", fields: [parentId], references: [id])
+  children    Account[]   @relation("SubAccounts")
+  journalLines JournalLine[]
+
+  @@unique([companyId, code])
+  @@map("accounts")
+}
+
+enum AccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+enum NormalBalance {
+  DEBIT
+  CREDIT
+}
+
+// ═══════════════════════════════════════
+// TRANSACTIONS
+// ═══════════════════════════════════════
+model Transaction {
+  id           String          @id @default(cuid())
+  companyId    String
+  refNumber    String
+  date         DateTime
+  type         TransactionType
+  party        String          // vendor / customer name
+  partyNpwp    String?
+  description  String?
+  dpp          Decimal         @db.Decimal(15,2)
+  taxType      TaxType         @default(NONE)
+  taxAmount    Decimal         @db.Decimal(15,2) @default(0)
+  total        Decimal         @db.Decimal(15,2)
+  status       TxStatus        @default(DRAFT)
+  sourceType   String?         // SCAN, MANUAL, IMPORT
+  documentId   String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  // Relations
+  company      Company         @relation(fields: [companyId], references: [id])
+  document     Document?       @relation(fields: [documentId], references: [id])
+  journalEntry JournalEntry?
+  items        TransactionItem[]
+
+  @@map("transactions")
+}
+
+enum TransactionType {
+  SALES
+  PURCHASE
+  EXPENSE
+  PAYROLL
+  OTHER
+}
+
+enum TaxType {
+  NONE
+  PPN_11
+  PPN_0
+  PPH_21
+  PPH_23
+  PPH_25
+}
+
+enum TxStatus {
+  DRAFT
+  POSTED
+  VOIDED
+}
+
+model TransactionItem {
+  id            String      @id @default(cuid())
+  transactionId String
+  name          String
+  qty           Decimal     @db.Decimal(10,2)
+  unitPrice     Decimal     @db.Decimal(15,2)
+  amount        Decimal     @db.Decimal(15,2)
+
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@map("transaction_items")
+}
+
+// ═══════════════════════════════════════
+// JOURNAL ENTRIES
+// ═══════════════════════════════════════
+model JournalEntry {
+  id            String        @id @default(cuid())
+  companyId     String
+  refNumber     String
+  date          DateTime
+  description   String
+  source        JournalSource @default(MANUAL)
+  isPosted      Boolean       @default(false)
+  postedAt      DateTime?
+  postedBy      String?
+  transactionId String?       @unique
+  createdAt     DateTime      @default(now())
+
+  // Relations
+  company       Company       @relation(fields: [companyId], references: [id])
+  transaction   Transaction?  @relation(fields: [transactionId], references: [id])
+  postedByUser  User?         @relation(fields: [postedBy], references: [id])
+  lines         JournalLine[]
+
+  @@map("journal_entries")
+}
+
+enum JournalSource {
+  AUTO_SCAN
+  AUTO_DEPRECIATION
+  AUTO_BANK
+  MANUAL
+}
+
+model JournalLine {
+  id             String       @id @default(cuid())
+  journalEntryId String
+  accountId      String
+  accountCode    String
+  accountName    String
+  debit          Decimal      @db.Decimal(15,2) @default(0)
+  credit         Decimal      @db.Decimal(15,2) @default(0)
+  description    String?
+
+  journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+  account        Account      @relation(fields: [accountId], references: [id])
+
+  @@map("journal_lines")
+}
+
+// ═══════════════════════════════════════
+// BANK ACCOUNTS & CASH
+// ═══════════════════════════════════════
+model BankAccount {
+  id          String    @id @default(cuid())
+  companyId   String
+  name        String    // "BCA 1234-5678"
+  bankName    String
+  accountNo   String
+  type        BankType  @default(CHECKING)
+  balance     Decimal   @db.Decimal(15,2) @default(0)
+  lastUpdated DateTime  @default(now())
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  company     Company   @relation(fields: [companyId], references: [id])
+  mutations   BankMutation[]
+
+  @@map("bank_accounts")
+}
+
+enum BankType {
+  CHECKING
+  SAVINGS
+  PETTY_CASH
+  DEPOSIT
+}
+
+model BankMutation {
+  id            String      @id @default(cuid())
+  bankAccountId String
+  date          DateTime
+  description   String
+  debit         Decimal     @db.Decimal(15,2) @default(0)
+  credit        Decimal     @db.Decimal(15,2) @default(0)
+  balance       Decimal     @db.Decimal(15,2)
+  refJournal    String?
+  isReconciled  Boolean     @default(false)
+  sourceType    String?     // SCAN, MANUAL
+  createdAt     DateTime    @default(now())
+
+  bankAccount   BankAccount @relation(fields: [bankAccountId], references: [id])
+
+  @@map("bank_mutations")
+}
+
+// ═══════════════════════════════════════
+// FIXED ASSETS
+// ═══════════════════════════════════════
+model Asset {
+  id              String        @id @default(cuid())
+  companyId       String
+  code            String
+  name            String
+  category        AssetCategory
+  location        String?
+  serialNumber    String?
+  acquisitionDate DateTime
+  cost            Decimal       @db.Decimal(15,2)
+  residualValue   Decimal       @db.Decimal(15,2) @default(0)
+  usefulLife      Int           // in years
+  method          DeprMethod    @default(STRAIGHT_LINE)
+  accDepreciation Decimal       @db.Decimal(15,2) @default(0)
+  status          AssetStatus   @default(ACTIVE)
+  disposalDate    DateTime?
+  disposalPrice   Decimal?      @db.Decimal(15,2)
+  disposalReason  String?
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  company         Company       @relation(fields: [companyId], references: [id])
+  depreciations   Depreciation[]
+
+  @@unique([companyId, code])
+  @@map("assets")
+}
+
+enum AssetCategory {
+  EQUIPMENT      // Peralatan
+  MACHINERY      // Mesin
+  SUPPLIES       // Perlengkapan
+  VEHICLE        // Kendaraan
+  BUILDING       // Bangunan
+  IT_COMPUTER    // IT & Komputer
+  LAND           // Tanah
+  OTHER
+}
+
+enum DeprMethod {
+  STRAIGHT_LINE         // Garis lurus
+  DOUBLE_DECLINING      // Saldo menurun
+  SUM_OF_YEARS          // Jumlah digit tahun
+}
+
+enum AssetStatus {
+  ACTIVE
+  DISPOSED
+  IDLE
+}
+
+model Depreciation {
+  id          String    @id @default(cuid())
+  assetId     String
+  period      DateTime  // month/year of depreciation
+  amount      Decimal   @db.Decimal(15,2)
+  bookValue   Decimal   @db.Decimal(15,2)
+  isPosted    Boolean   @default(false)
+  journalRef  String?
+  createdAt   DateTime  @default(now())
+
+  asset       Asset     @relation(fields: [assetId], references: [id])
+
+  @@map("depreciations")
+}
+
+// ═══════════════════════════════════════
+// DOCUMENTS (uploaded files)
+// ═══════════════════════════════════════
+model Document {
+  id            String       @id @default(cuid())
+  companyId     String
+  uploadedBy    String
+  filename      String
+  originalName  String
+  mimeType      String
+  size          Int
+  path          String
+  status        DocStatus    @default(PENDING)
+  aiConfidence  Int?         // 0-100
+  aiData        Json?        // extracted data from AI
+  reviewedBy    String?
+  reviewedAt    DateTime?
+  notes         String?
+  createdAt     DateTime     @default(now())
+
+  company       Company      @relation(fields: [companyId], references: [id])
+  uploadedByUser User        @relation(fields: [uploadedBy], references: [id])
+  transactions  Transaction[]
+
+  @@map("documents")
+}
+
+enum DocStatus {
+  PENDING       // uploaded, not processed
+  PROCESSING    // AI is reading
+  EXTRACTED     // AI done, awaiting review
+  APPROVED      // operator approved
+  REJECTED      // operator rejected
+  POSTED        // journal entry created
+}
+
+// ═══════════════════════════════════════
+// TAX
+// ═══════════════════════════════════════
+model TaxReport {
+  id          String     @id @default(cuid())
+  companyId   String
+  type        TaxRepType
+  period      DateTime   // masa pajak
+  dpp         Decimal    @db.Decimal(15,2) @default(0)
+  taxIn       Decimal    @db.Decimal(15,2) @default(0)  // PPN masukan
+  taxOut      Decimal    @db.Decimal(15,2) @default(0)  // PPN keluaran
+  taxNet      Decimal    @db.Decimal(15,2) @default(0)  // kurang/lebih bayar
+  status      TaxStatus  @default(DRAFT)
+  filedAt     DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  company     Company    @relation(fields: [companyId], references: [id])
+
+  @@map("tax_reports")
+}
+
+enum TaxRepType {
+  SPT_MASA_PPN
+  SPT_PPH_21
+  SPT_PPH_23
+  SPT_PPH_25
+  SPT_TAHUNAN
+}
+
+enum TaxStatus {
+  DRAFT
+  READY
+  FILED
+  PAID
+}
+
+// ═══════════════════════════════════════
+// REPORTS
+// ═══════════════════════════════════════
+model Report {
+  id          String      @id @default(cuid())
+  clientId    String
+  type        ReportType
+  period      String      // "Juni 2026"
+  data        Json        // report data
+  sentAt      DateTime?
+  sentVia     String?     // EMAIL, PORTAL, WHATSAPP
+  createdAt   DateTime    @default(now())
+
+  client      Client      @relation(fields: [clientId], references: [id])
+
+  @@map("reports")
+}
+
+enum ReportType {
+  PL            // Laba Rugi
+  BALANCE_SHEET // Neraca
+  CASH_FLOW     // Arus Kas
+  TAX_SUMMARY   // Ringkasan Pajak
+  FULL_PACKAGE  // Semua laporan
+}
+
+// ═══════════════════════════════════════
+// BILLING
+// ═══════════════════════════════════════
+model ClientInvoice {
+  id          String        @id @default(cuid())
+  clientId    String
+  period      String        // "Juli 2026"
+  amount      Decimal       @db.Decimal(15,2)
+  status      InvoiceStatus @default(UNPAID)
+  dueDate     DateTime
+  paidAt      DateTime?
+  payMethod   String?
+  notes       String?
+  createdAt   DateTime      @default(now())
+
+  client      Client        @relation(fields: [clientId], references: [id])
+
+  @@map("client_invoices")
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PAID
+  OVERDUE
+  WAIVED
+}
+
+// ═══════════════════════════════════════
+// BUDGET
+// ═══════════════════════════════════════
+model Budget {
+  id          String    @id @default(cuid())
+  companyId   String
+  period      String    // "2026-06"
+  category    String
+  budgeted    Decimal   @db.Decimal(15,2)
+  actual      Decimal   @db.Decimal(15,2) @default(0)
+  createdAt   DateTime  @default(now())
+
+  company     Company   @relation(fields: [companyId], references: [id])
+
+  @@map("budgets")
+}
+
+// ═══════════════════════════════════════
+// NOTIFICATIONS
+// ═══════════════════════════════════════
+model Notification {
+  id          String    @id @default(cuid())
+  userId      String
+  title       String
+  message     String
+  type        String    // INFO, WARNING, SUCCESS, TAX_DEADLINE
+  isRead      Boolean   @default(false)
+  link        String?
+  createdAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+// ═══════════════════════════════════════
+// AUDIT LOG
+// ═══════════════════════════════════════
+model AuditLog {
+  id          String    @id @default(cuid())
+  userId      String
+  action      String
+  entity      String
+  entityId    String
+  before      Json?
+  after       Json?
+  ip          String?
+  createdAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
