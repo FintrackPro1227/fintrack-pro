@@ -20,6 +20,29 @@ app.use(session({
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// SETUP ENDPOINT - jalankan sekali untuk buat admin user
+app.get('/api/do-setup', async (req, res) => {
+  if (req.query.key !== 'finrapi2026setup') return res.status(403).json({ error: 'Forbidden' });
+  try {
+    const bcrypt = require('bcryptjs');
+    const prisma = require('./db');
+    await prisma.company.upsert({
+      where: { id: 'operator-company-001' },
+      update: {},
+      create: { id: 'operator-company-001', name: 'PT FinTrack Teknologi Indonesia', type: 'OPERATOR', legalForm: 'PT', npwp: '01.000.123.4-567.000', pkpStatus: true }
+    });
+    const hash = await bcrypt.hash('FinTrack2026Admin', 10);
+    const user = await prisma.user.upsert({
+      where: { email: 'agushwork@gmail.com' },
+      update: { password: hash },
+      create: { email: 'agushwork@gmail.com', password: hash, name: 'Super Admin', role: 'SUPERADMIN' }
+    });
+    res.json({ success: true, message: 'Setup berhasil!', email: user.email });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.use('/api/auth',          require('./routes/auth'));
 app.use('/api/dashboard',     require('./routes/dashboard'));
 app.use('/api/clients',       require('./routes/clients'));
@@ -51,15 +74,3 @@ app.listen(PORT, function() {
 });
 
 module.exports = app;
-
-// One-time setup endpoint
-app.get('/api/setup', async (req, res) => {
-  const secret = req.query.secret;
-  if (secret !== process.env.JWT_SECRET) return res.status(403).json({ error: 'Forbidden' });
-  try {
-    const seed = require('./seed');
-    res.json({ message: 'Setup berhasil!' });
-  } catch(e) {
-    res.status(500).json({ error: e.message });
-  }
-});
