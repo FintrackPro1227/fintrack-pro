@@ -40,7 +40,7 @@ app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/ai',           require('./routes/ai'));
 
 // ── CATCH ALL → serve frontend ──
-app.get('*', (req, res) => {
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
