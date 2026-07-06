@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>FinRapi — Input Dokumen</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0a1628;--blue:#2563eb;--grn:#059669;--red:#dc2626;--ink:#0f172a;--ink2:#475569;--ink3:#94a3b8;--bd:#e2e8f0;--surf:#fff;--bg:#f8fafc;--fn:system-ui,-apple-system,sans-serif}
+body{font-family:var(--fn);background:var(--bg);color:var(--ink);min-height:100vh;padding-bottom:40px}
+.topbar{background:var(--navy);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.tl{display:flex;align-items:center;gap:10px}
+.tlogo{font-size:16px;font-weight:800;color:#f8fafc}
+.tsub{font-size:12px;color:#64748b}
+.tright{display:flex;align-items:center;gap:8px}
+.tuser{font-size:12.5px;color:#94a3b8}
+.tlogout{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:#94a3b8;padding:5px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--fn)}
+.wrap{max-width:480px;margin:0 auto;padding:16px}
+.card{background:var(--surf);border-radius:16px;border:1px solid var(--bd);margin-bottom:14px;overflow:hidden}
+.ch{padding:13px 18px;border-bottom:1px solid var(--bd);font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.cb{padding:16px 18px}
+.fg{margin-bottom:13px}
+.fl{font-size:12.5px;font-weight:600;color:var(--ink2);margin-bottom:5px;display:block}
+select,textarea{width:100%;padding:11px 13px;border:1.5px solid var(--bd);border-radius:10px;font-size:14px;background:var(--surf);color:var(--ink);outline:none;font-family:var(--fn);-webkit-appearance:none}
+select:focus,textarea:focus{border-color:var(--blue)}
+textarea{resize:none;min-height:76px}
+.qbox{background:var(--bg);border-radius:10px;padding:12px 14px;margin-top:10px}
+.qtop{display:flex;justify-content:space-between;margin-bottom:7px}
+.qlbl{font-size:12px;font-weight:600;color:var(--ink2)}
+.qnum{font-size:13px;font-weight:700}
+.qbar{height:7px;border-radius:4px;background:var(--bd);overflow:hidden}
+.qfill{height:100%;border-radius:4px;transition:width .5s}
+.qsub{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink3);margin-top:4px}
+.stabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stab{padding:10px;border-radius:10px;border:1.5px solid var(--bd);text-align:center;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink2);transition:all .15s;-webkit-tap-highlight-color:transparent}
+.stab.on{border-color:var(--blue);background:var(--blue);color:#fff}
+.upzone{border:2px dashed var(--bd);border-radius:12px;padding:26px 16px;text-align:center;cursor:pointer;background:var(--bg);-webkit-tap-highlight-color:transparent}
+.upzone.has{border-color:var(--grn);background:#ecfdf5}
+.upzone-ico{font-size:32px;display:block;margin-bottom:8px}
+.upzone-t{font-size:14.5px;font-weight:700;margin-bottom:4px}
+.upzone-s{font-size:12.5px;color:var(--ink3)}
+#prev{width:100%;max-height:180px;object-fit:contain;border-radius:8px;margin-top:10px;display:none}
+#fname{font-size:13px;font-weight:600;color:#065f46;margin-top:8px;display:none}
+.sbtn{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;border:none;cursor:pointer;font-family:var(--fn);display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent}
+.sbtn.ready{background:var(--grn);color:#fff}
+.sbtn.dis{background:#e2e8f0;color:#94a3b8;cursor:not-allowed}
+.sbtn.load{background:#86efac;color:#166534;cursor:not-allowed}
+.alert{padding:11px 14px;border-radius:10px;font-size:13.5px;margin-bottom:12px;line-height:1.5}
+.asuc{background:#dcfce7;color:#166534}
+.awarn{background:#fef9c3;color:#854d0e}
+.aerr{background:#fee2e2;color:#991b1b}
+.hi{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--bd)}
+.hi:last-child{border-bottom:none}
+.hi-ico{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-size:17px;flex-shrink:0;background:#eff6ff}
+.hi-b{flex:1;min-width:0}
+.hi-n{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hi-s{font-size:11.5px;color:var(--ink3);margin-top:2px}
+.hi-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0;white-space:nowrap}
+.empty{text-align:center;padding:18px;color:var(--ink3);font-size:13.5px}
+.spin{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="tl">
+    <div class="tlogo">FinRapi</div>
+    <div class="tsub">Input dokumen</div>
+  </div>
+  <div class="tright">
+    <span class="tuser" id="tuser">Tim</span>
+    <button class="tlogout" onclick="logout()">Keluar</button>
+  </div>
+</div>
+<div class="wrap">
+  <div id="alert-area"></div>
+  <div class="card">
+    <div class="ch">👤 Pilih klien</div>
+    <div class="cb">
+      <div class="fg" style="margin-bottom:0">
+        <label class="fl">Klien</label>
+        <select id="csel" onchange="loadQuota()"><option value="">— Pilih klien —</option></select>
+      </div>
+      <div class="qbox" id="qbox" style="display:none">
+        <div class="qtop"><span class="qlbl">Kuota dokumen bulan ini</span><span class="qnum" id="qnum">—</span></div>
+        <div class="qbar"><div class="qfill" id="qfill" style="width:0%"></div></div>
+        <div class="qsub"><span id="qplan">—</span><span id="qrem">—</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch">📬 Sumber</div>
+    <div class="cb" style="padding-bottom:14px">
+      <div class="stabs">
+        <div class="stab on" onclick="setSrc('WHATSAPP',this)">💬 WhatsApp</div>
+        <div class="stab" onclick="setSrc('EMAIL',this)">📧 Email</div>
+        <div class="stab" onclick="setSrc('FISIK',this)">📄 Fisik</div>
+        <div class="stab" onclick="setSrc('PORTAL',this)">🌐 Portal</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch">📎 Dokumen</div>
+    <div class="cb">
+      <div class="upzone" id="upzone" onclick="document.getElementById('fi').click()">
+        <span class="upzone-ico">📷</span>
+        <div class="upzone-t">Foto atau pilih file</div>
+        <div class="upzone-s">JPG · PNG · PDF · Maks 10MB</div>
+        <img id="prev"><div id="fname"></div>
+      </div>
+      <input type="file" id="fi" accept="image/*,.pdf" style="display:none" onchange="onFile(this)">
+      <div class="fg" style="margin-top:13px;margin-bottom:0">
+        <label class="fl">Keterangan (opsional)</label>
+        <textarea id="notes" placeholder="Contoh: Nota belanja tgl 6 Jul dari Pak Ahmad..."></textarea>
+      </div>
+    </div>
+  </div>
+  <button class="sbtn dis" id="sbtn" onclick="submit()">Pilih klien dan file dulu</button>
+  <div class="card" style="margin-top:14px">
+    <div class="ch">🕐 Input hari ini</div>
+    <div class="cb" style="padding:12px 18px" id="hlist"><div class="empty">Belum ada input hari ini</div></div>
+  </div>
+</div>
+<script>
+const TOKEN=localStorage.getItem('fr_token');
+const UNAME=localStorage.getItem('fr_name')||'Tim';
+if(!TOKEN){window.location.href='/quick-upload.html';}
+document.getElementById('tuser').textContent=UNAME.split(' ')[0];
+let SRC='WHATSAPP';
+
+async function api(m,u,b){
+  const h={'Authorization':'Bearer '+TOKEN};
+  if(b)h['Content-Type']='application/json';
+  const r=await fetch(u,{method:m,headers:h,body:b?JSON.stringify(b):undefined});
+  const d=await r.json();
+  if(!r.ok)throw new Error(d.error||'Error');
+  return d;
+}
+async function apiF(u,fd){
+  const r=await fetch(u,{method:'POST',headers:{'Authorization':'Bearer '+TOKEN},body:fd});
+  const d=await r.json();
+  if(!r.ok)throw new Error(d.error||'Error');
+  return d;
+}
+
+async function init(){
+  try{
+    const me=await api('GET','/api/auth/me');
+    document.getElementById('tuser').textContent=me.user.name.split(' ')[0];
+    const clients=await api('GET','/api/clients');
+    const sel=document.getElementById('csel');
+    clients.forEach(c=>{
+      const o=document.createElement('option');
+      o.value=c.companyId;
+      o.dataset.name=c.company?.name||'Klien';
+      o.textContent=(c.company?.name||'Klien')+' — '+c.plan;
+      sel.appendChild(o);
+    });
+    loadHistory();
+  }catch(e){
+    if(e.message.includes('401')||e.message.includes('autentik')){
+      localStorage.removeItem('fr_token');
+      window.location.href='/quick-upload.html';
+    }
+    showAlert('Gagal memuat: '+e.message,'err');
+  }
+}
+
+async function loadQuota(){
+  const id=document.getElementById('csel').value;
+  const box=document.getElementById('qbox');
+  if(!id){box.style.display='none';checkBtn();return;}
+  try{
+    const q=await api('GET','/api/documents/quota/'+id);
+    box.style.display='block';
+    document.getElementById('qnum').textContent=q.used+' / '+q.limit;
+    document.getElementById('qplan').textContent='Paket '+q.plan;
+    document.getElementById('qrem').textContent=q.remaining+' tersisa';
+    const f=document.getElementById('qfill');
+    f.style.width=Math.min(100,q.percentage)+'%';
+    f.style.background=q.isOverLimit?'#dc2626':q.isNearLimit?'#d97706':'#059669';
+    clearAlert();
+    if(q.isOverLimit)showAlert('⚠️ Kuota penuh! Klien perlu upgrade paket.','err');
+    else if(q.isNearLimit)showAlert('⚠️ Kuota hampir penuh ('+q.percentage+'%).','warn');
+  }catch(e){console.error(e);}
+  checkBtn();
+}
+
+function setSrc(s,el){
+  SRC=s;
+  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function onFile(inp){
+  const f=inp.files[0];if(!f)return;
+  document.getElementById('upzone').classList.add('has');
+  if(f.type.startsWith('image/')){
+    const r=new FileReader();
+    r.onload=e=>{const p=document.getElementById('prev');p.src=e.target.result;p.style.display='block';document.getElementById('fname').style.display='none';};
+    r.readAsDataURL(f);
+  }else{
+    document.getElementById('prev').style.display='none';
+    const fn=document.getElementById('fname');fn.textContent='📄 '+f.name;fn.style.display='block';
+  }
+  checkBtn();
+}
+
+function checkBtn(){
+  const btn=document.getElementById('sbtn');
+  const ok=!!document.getElementById('csel').value&&!!document.getElementById('fi').files[0];
+  btn.className='sbtn '+(ok?'ready':'dis');
+  btn.textContent=ok?'✓ Upload dokumen':'Pilih klien dan file dulu';
+}
+
+async function submit(){
+  const id=document.getElementById('csel').value;
+  const f=document.getElementById('fi').files[0];
+  const btn=document.getElementById('sbtn');
+  if(!id||!f||btn.classList.contains('dis')||btn.classList.contains('load'))return;
+  btn.className='sbtn load';
+  btn.innerHTML='<div class="spin"></div> Mengupload...';
+  clearAlert();
+  try{
+    const fd=new FormData();
+    fd.append('file',f);fd.append('companyId',id);
+    fd.append('notes',document.getElementById('notes').value);
+    fd.append('source',SRC);
+    const res=await apiF('/api/documents/quick-upload',fd);
+    showAlert('✅ '+res.message,'suc');
+    const q=res.quota;
+    if(q){
+      document.getElementById('qnum').textContent=q.used+' / '+q.limit;
+      document.getElementById('qrem').textContent=q.remaining+' tersisa';
+      const f2=document.getElementById('qfill');
+      const pct=Math.min(100,Math.round(q.used/q.limit*100));
+      f2.style.width=pct+'%';
+      f2.style.background=pct>=100?'#dc2626':pct>=80?'#d97706':'#059669';
+    }
+    const sel=document.getElementById('csel');
+    const cn=sel.options[sel.selectedIndex].dataset.name||'—';
+    addHist({name:f.name,client:cn,src:SRC});
+    document.getElementById('fi').value='';
+    document.getElementById('notes').value='';
+    document.getElementById('prev').style.display='none';
+    document.getElementById('fname').style.display='none';
+    document.getElementById('upzone').classList.remove('has');
+  }catch(e){showAlert('❌ '+e.message,'err');}
+  checkBtn();
+}
+
+async function loadHistory(){
+  try{
+    const docs=await api('GET','/api/documents?limit=30');
+    const today=new Date().toDateString();
+    const td=docs.filter(d=>new Date(d.createdAt).toDateString()===today);
+    const list=document.getElementById('hlist');
+    if(!td.length){list.innerHTML='<div class="empty">Belum ada input hari ini</div>';return;}
+    list.innerHTML='';
+    td.forEach(d=>addHist({name:d.originalName,client:d.company?.name||'—',src:d.sourceType||'MANUAL',status:d.status,time:new Date(d.createdAt)},true));
+  }catch(e){console.error(e);}
+}
+
+function addHist(item,append=false){
+  const list=document.getElementById('hlist');
+  const empty=list.querySelector('.empty');
+  if(empty)list.innerHTML='';
+  const si={WHATSAPP:'💬',EMAIL:'📧',FISIK:'📄',PORTAL:'🌐',MANUAL:'📋'};
+  const sc={PENDING:'background:#fef9c3;color:#854d0e',APPROVED:'background:#dcfce7;color:#166534',REJECTED:'background:#fee2e2;color:#991b1b',PROCESSING:'background:#dbeafe;color:#1e40af'};
+  const t=item.time?item.time.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  const div=document.createElement('div');
+  div.className='hi';
+  div.innerHTML=`<div class="hi-ico">${si[item.src]||'📄'}</div><div class="hi-b"><div class="hi-n">${item.name}</div><div class="hi-s">${item.client} · ${t}</div></div><span class="hi-badge" style="${sc[item.status||'PENDING']}">${item.status||'PENDING'}</span>`;
+  if(append)list.appendChild(div);
+  else list.insertBefore(div,list.firstChild);
+}
+
+function showAlert(m,t){
+  const c={suc:'asuc',warn:'awarn',err:'aerr'};
+  document.getElementById('alert-area').innerHTML=`<div class="alert ${c[t]}">${m}</div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function clearAlert(){document.getElementById('alert-area').innerHTML='';}
+function logout(){localStorage.removeItem('fr_token');localStorage.removeItem('fr_name');window.location.href='/quick-upload.html';}
+
+init();
+</script>
+</body>
+</html>
