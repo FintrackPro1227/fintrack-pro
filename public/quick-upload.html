@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>FinRapi — Input Dokumen</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0a1628;--blue:#2563eb;--grn:#059669;--red:#dc2626;--ink:#0f172a;--ink2:#475569;--ink3:#94a3b8;--bd:#e2e8f0;--surf:#fff;--bg:#f8fafc;--fn:system-ui,-apple-system,sans-serif}
+body{font-family:var(--fn);background:var(--bg);color:var(--ink);min-height:100vh;padding-bottom:40px}
+.topbar{background:var(--navy);padding:14px 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+.topbar-logo{font-size:16px;font-weight:800;color:#f8fafc}
+.topbar-title{font-size:13px;color:#94a3b8;margin-left:4px}
+.topbar-badge{margin-left:auto;background:var(--blue);color:#fff;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px}
+.wrap{max-width:480px;margin:0 auto;padding:20px 16px}
+.card{background:var(--surf);border-radius:16px;border:1px solid var(--bd);margin-bottom:16px;overflow:hidden}
+.card-h{padding:14px 18px;border-bottom:1px solid var(--bd);font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+.fg{margin-bottom:14px}
+.fl{font-size:12.5px;font-weight:600;color:var(--ink2);margin-bottom:6px;display:block}
+select,textarea,input{width:100%;padding:11px 13px;border:1.5px solid var(--bd);border-radius:10px;font-size:14px;background:var(--surf);color:var(--ink);outline:none;font-family:var(--fn);transition:border .15s;-webkit-appearance:none}
+select:focus,textarea:focus,input:focus{border-color:var(--blue)}
+textarea{resize:none;min-height:80px}
+.upload-zone{border:2px dashed var(--bd);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);-webkit-tap-highlight-color:transparent}
+.upload-zone:active{background:var(--blue);border-color:var(--blue)}
+.upload-zone.has-file{border-color:var(--grn);background:#ecfdf5}
+.upload-zone-ico{font-size:36px;display:block;margin-bottom:10px}
+.upload-zone-title{font-size:15px;font-weight:700;margin-bottom:5px}
+.upload-zone-sub{font-size:13px;color:var(--ink3)}
+.preview-img{width:100%;border-radius:10px;margin-top:12px;display:none}
+.btn{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;border:none;cursor:pointer;font-family:var(--fn);display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.btn-grn{background:var(--grn);color:#fff}
+.btn-grn:active{background:#047857}
+.btn-grn:disabled{background:var(--ink3);cursor:not-allowed}
+.quota-bar{height:8px;border-radius:4px;background:var(--bd);overflow:hidden;margin-top:8px}
+.quota-fill{height:100%;border-radius:4px;transition:width .5s}
+.quota-info{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink3);margin-top:5px}
+.alert{padding:12px 14px;border-radius:10px;font-size:13.5px;display:flex;gap:9px;align-items:flex-start;margin-bottom:14px}
+.alert-suc{background:#ecfdf5;color:#065f46}
+.alert-warn{background:#fffbeb;color:#92400e}
+.alert-err{background:#fef2f2;color:#991b1b}
+.alert-ico{font-size:17px;flex-shrink:0;margin-top:1px}
+.source-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.src-tab{padding:10px;border-radius:10px;border:1.5px solid var(--bd);text-align:center;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--ink2);transition:all .15s}
+.src-tab.on{border-color:var(--blue);background:var(--blue);color:#fff}
+.history-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bd)}
+.history-item:last-child{border-bottom:none}
+.hi-ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.hi-body{flex:1;min-width:0}
+.hi-name{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hi-sub{font-size:12px;color:var(--ink3);margin-top:2px}
+.hi-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0}
+.loading{display:none;text-align:center;padding:20px}
+.spin{width:36px;height:36px;border:3px solid var(--bd);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="topbar-logo">FinRapi</div>
+    <div class="topbar-title">Input dokumen tim</div>
+  </div>
+  <div class="topbar-badge" id="user-badge">Tim</div>
+</div>
+
+<div class="wrap">
+
+  <!-- ALERT AREA -->
+  <div id="alert-area"></div>
+
+  <!-- CLIENT SELECTOR -->
+  <div class="card">
+    <div class="card-h">👤 Pilih klien</div>
+    <div class="card-b">
+      <div class="fg">
+        <label class="fl">Klien</label>
+        <select id="client-sel" onchange="loadQuota()">
+          <option value="">— Pilih klien —</option>
+        </select>
+      </div>
+      <!-- QUOTA -->
+      <div id="quota-wrap" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:12.5px;font-weight:600;color:var(--ink2)">Kuota dokumen bulan ini</span>
+          <span style="font-size:12.5px;font-weight:700" id="quota-text">—</span>
+        </div>
+        <div class="quota-bar"><div class="quota-fill" id="quota-fill" style="width:0%;background:var(--grn)"></div></div>
+        <div class="quota-info">
+          <span id="quota-plan">—</span>
+          <span id="quota-remain">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOURCE -->
+  <div class="card">
+    <div class="card-h">📬 Sumber dokumen</div>
+    <div class="card-b">
+      <div class="source-tabs">
+        <div class="src-tab on" onclick="setSource('WHATSAPP',this)">💬 WhatsApp</div>
+        <div class="src-tab" onclick="setSource('EMAIL',this)">📧 Email</div>
+        <div class="src-tab" onclick="setSource('FISIK',this)">📄 Fisik/Scan</div>
+        <div class="src-tab" onclick="setSource('PORTAL',this)">🌐 Portal</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPLOAD -->
+  <div class="card">
+    <div class="card-h">📎 Dokumen</div>
+    <div class="card-b">
+      <div class="upload-zone" id="upzone" onclick="document.getElementById('file-inp').click()">
+        <span class="upload-zone-ico">📷</span>
+        <div class="upload-zone-title">Foto atau pilih file</div>
+        <div class="upload-zone-sub">JPG · PNG · PDF · Maks. 10MB</div>
+        <img id="preview-img" class="preview-img">
+      </div>
+      <input type="file" id="file-inp" accept="image/*,.pdf" style="display:none" onchange="onFile(this)">
+
+      <div class="fg" style="margin-top:14px">
+        <label class="fl">Keterangan (opsional)</label>
+        <textarea id="notes-inp" placeholder="Contoh: Nota belanja bahan baku tgl 28 Jun dari Pak Ahmad..."></textarea>
+      </div>
+
+      <div class="loading" id="loading-area">
+        <div class="spin"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--ink2)">Mengupload dokumen...</div>
+      </div>
+
+      <button class="btn btn-grn" id="submit-btn" onclick="submitDoc()" disabled>
+        <span>✓</span> Input dokumen
+      </button>
+    </div>
+  </div>
+
+  <!-- HISTORY TODAY -->
+  <div class="card">
+    <div class="card-h">🕐 Input hari ini</div>
+    <div class="card-b" id="history-list" style="padding:12px 18px">
+      <div style="text-align:center;color:var(--ink3);padding:12px;font-size:13.5px">Belum ada input hari ini</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = '';
+let token = localStorage.getItem('ft_token');
+let clients = [];
+let selectedSource = 'WHATSAPP';
+let todayDocs = [];
+
+// ── AUTH CHECK ──
+async function init() {
+  if (!token) {
+    // Try to get from parent page or prompt
+    token = prompt('Masukkan token login kamu:');
+    if (token) localStorage.setItem('ft_token', token);
+    else { alert('Perlu login dulu'); return; }
+  }
+
+  try {
+    const me = await api('GET', '/api/auth/me');
+    document.getElementById('user-badge').textContent = me.user.name.split(' ')[0];
+    await loadClients();
+    await loadTodayHistory();
+  } catch(e) {
+    localStorage.removeItem('ft_token');
+    showAlert('Session habis. Refresh halaman dan login ulang.', 'err');
+  }
+}
+
+async function api(method, url, body, isFormData=false) {
+  const opts = { method, headers: { 'Authorization': 'Bearer ' + token } };
+  if (body && !isFormData) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+  if (isFormData) opts.body = body;
+  const res = await fetch(API + url, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Error');
+  return data;
+}
+
+async function loadClients() {
+  try {
+    clients = await api('GET', '/api/clients');
+    const sel = document.getElementById('client-sel');
+    clients.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.companyId;
+      opt.textContent = c.company.name + ' — ' + c.plan;
+      sel.appendChild(opt);
+    });
+  } catch(e) { showAlert('Gagal load klien: ' + e.message, 'err'); }
+}
+
+async function loadQuota() {
+  const companyId = document.getElementById('client-sel').value;
+  if (!companyId) { document.getElementById('quota-wrap').style.display='none'; checkSubmit(); return; }
+
+  try {
+    const q = await api('GET', '/api/documents/quota/' + companyId);
+    document.getElementById('quota-wrap').style.display = 'block';
+    document.getElementById('quota-text').textContent = q.used + ' / ' + q.limit;
+    document.getElementById('quota-plan').textContent = 'Paket ' + q.plan;
+    document.getElementById('quota-remain').textContent = q.remaining + ' tersisa';
+
+    const fill = document.getElementById('quota-fill');
+    fill.style.width = q.percentage + '%';
+    fill.style.background = q.isOverLimit ? '#dc2626' : q.isNearLimit ? '#d97706' : '#059669';
+
+    if (q.isOverLimit) showAlert('⚠️ Kuota dokumen bulan ini sudah PENUH. Klien perlu upgrade paket.', 'err');
+    else if (q.isNearLimit) showAlert('⚠️ Kuota hampir penuh (' + q.percentage + '%). Informasikan ke klien.', 'warn');
+    else clearAlert();
+  } catch(e) { console.error(e); }
+
+  checkSubmit();
+}
+
+function setSource(src, el) {
+  selectedSource = src;
+  document.querySelectorAll('.src-tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function onFile(inp) {
+  const file = inp.files[0];
+  if (!file) return;
+  const zone = document.getElementById('upzone');
+  const prev = document.getElementById('preview-img');
+  zone.classList.add('has-file');
+  if (file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = e => { prev.src = e.target.result; prev.style.display = 'block'; };
+    reader.readAsDataURL(file);
+  } else {
+    prev.style.display = 'none';
+    document.querySelector('.upload-zone-title').textContent = '📄 ' + file.name;
+  }
+  checkSubmit();
+}
+
+function checkSubmit() {
+  const hasClient = !!document.getElementById('client-sel').value;
+  const hasFile = !!document.getElementById('file-inp').files[0];
+  document.getElementById('submit-btn').disabled = !(hasClient && hasFile);
+}
+
+async function submitDoc() {
+  const companyId = document.getElementById('client-sel').value;
+  const file = document.getElementById('file-inp').files[0];
+  const notes = document.getElementById('notes-inp').value;
+
+  if (!companyId || !file) return;
+
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('loading-area').style.display = 'block';
+  clearAlert();
+
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('companyId', companyId);
+    fd.append('notes', notes);
+    fd.append('source', selectedSource);
+
+    const res = await api('POST', '/api/documents/quick-upload', fd, true);
+
+    showAlert('✅ ' + res.message, 'suc');
+
+    // Update quota display
+    const q = res.quota;
+    document.getElementById('quota-text').textContent = q.used + ' / ' + q.limit;
+    const fill = document.getElementById('quota-fill');
+    const pct = Math.round(q.used/q.limit*100);
+    fill.style.width = pct + '%';
+    fill.style.background = pct >= 100 ? '#dc2626' : pct >= 80 ? '#d97706' : '#059669';
+    document.getElementById('quota-remain').textContent = q.remaining + ' tersisa';
+
+    // Add to history
+    const clientName = document.getElementById('client-sel').options[document.getElementById('client-sel').selectedIndex].text.split('—')[0].trim();
+    addToHistory({ name: file.name, client: clientName, source: selectedSource, time: new Date() });
+
+    // Reset form
+    document.getElementById('file-inp').value = '';
+    document.getElementById('notes-inp').value = '';
+    document.getElementById('preview-img').style.display = 'none';
+    document.getElementById('preview-img').src = '';
+    document.getElementById('upzone').classList.remove('has-file');
+    document.querySelector('.upload-zone-title').textContent = 'Foto atau pilih file';
+
+  } catch(e) {
+    showAlert('❌ Gagal: ' + e.message, 'err');
+  }
+
+  document.getElementById('loading-area').style.display = 'none';
+  document.getElementById('submit-btn').disabled = false;
+}
+
+async function loadTodayHistory() {
+  try {
+    const docs = await api('GET', '/api/documents?limit=20');
+    const today = new Date().toDateString();
+    const todayItems = docs.filter(d => new Date(d.createdAt).toDateString() === today);
+    if (todayItems.length > 0) {
+      const list = document.getElementById('history-list');
+      list.innerHTML = '';
+      todayItems.forEach(d => {
+        const time = new Date(d.createdAt).toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+        list.innerHTML += `
+          <div class="history-item">
+            <div class="hi-ico" style="background:#eff6ff">📄</div>
+            <div class="hi-body">
+              <div class="hi-name">${d.originalName}</div>
+              <div class="hi-sub">${d.company?.name || '—'} · ${time}</div>
+            </div>
+            <span class="hi-badge" style="background:${d.status==='PENDING'?'#fef9c3':d.status==='APPROVED'?'#dcfce7':'#fee2e2'};color:${d.status==='PENDING'?'#854d0e':d.status==='APPROVED'?'#166534':'#991b1b'}">${d.status}</span>
+          </div>`;
+      });
+    }
+  } catch(e) { console.error(e); }
+}
+
+function addToHistory(item) {
+  const list = document.getElementById('history-list');
+  const time = item.time.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+  const newItem = document.createElement('div');
+  newItem.className = 'history-item';
+  newItem.innerHTML = `
+    <div class="hi-ico" style="background:#ecfdf5">✅</div>
+    <div class="hi-body">
+      <div class="hi-name">${item.name}</div>
+      <div class="hi-sub">${item.client} · ${time} · ${item.source}</div>
+    </div>
+    <span class="hi-badge" style="background:#dcfce7;color:#166534">Baru</span>`;
+  if (list.querySelector('[style*="Belum ada"]')) list.innerHTML = '';
+  list.insertBefore(newItem, list.firstChild);
+}
+
+function showAlert(msg, type) {
+  const colors = { suc:'alert-suc', warn:'alert-warn', err:'alert-err' };
+  const icons = { suc:'✅', warn:'⚠️', err:'❌' };
+  document.getElementById('alert-area').innerHTML = `
+    <div class="alert ${colors[type]}">
+      <span class="alert-ico">${icons[type]}</span>
+      <span>${msg}</span>
+    </div>`;
+}
+function clearAlert() { document.getElementById('alert-area').innerHTML = ''; }
+
+init();
+</script>
+</body>
+</html>

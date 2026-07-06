@@ -108,9 +108,11 @@ model Client {
 }
 
 enum ClientPlan {
-  STARTER   // Rp 299.000
-  BISNIS    // Rp 799.000
-  PRO       // Rp 2.500.000
+  STARTER      // Rp 499.000  - omset s/d 100jt, 75 dok, 50 transaksi
+  BISNIS       // Rp 1.299.000 - omset s/d 300jt, 125 dok, 100 transaksi
+  PRO          // Rp 2.199.000 - omset s/d 600jt, 175 dok, 150 transaksi
+  ENTERPRISE   // Rp 3.799.000 - omset s/d 1M, 325 dok, 300 transaksi
+  CUSTOM       // Custom pricing
 }
 
 enum ClientStatus {

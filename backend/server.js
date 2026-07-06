@@ -36,10 +36,11 @@ app.use('/api/kasbank',      require('./routes/kasbank'));
 app.use('/api/tax',          require('./routes/tax'));
 app.use('/api/reports',      require('./routes/reports'));
 app.use('/api/billing',      require('./routes/billing'));
+app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/ai',           require('./routes/ai'));
 
 // ── CATCH ALL → serve frontend ──
-app.get('*splat', (req, res) => {
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 

@@ -3,7 +3,7 @@ const router = require('express').Router();
 const prisma = require('../db');
 const { authenticate, operatorOnly } = require('../middleware/auth');
 
-const PLAN_PRICE = { STARTER: 299000, BISNIS: 799000, PRO: 2500000 };
+const PLAN_PRICE = { STARTER: 499000, BISNIS: 1299000, PRO: 2199000, ENTERPRISE: 3799000, CUSTOM: 0 };
 
 router.get('/', authenticate, operatorOnly, async (req, res) => {
   try {
