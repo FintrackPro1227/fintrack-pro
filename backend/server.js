@@ -21,7 +21,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // SETUP ENDPOINT - jalankan sekali untuk buat admin user
-app.get('/api/do-setup', async (req, res) => {
+// replaced, async (req, res) => {
   if (req.query.key !== 'finrapi2026setup') return res.status(403).json({ error: 'Forbidden' });
   try {
     const bcrypt = require('bcryptjs');
