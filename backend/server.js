@@ -51,3 +51,15 @@ app.listen(PORT, function() {
 });
 
 module.exports = app;
+
+// One-time setup endpoint
+app.get('/api/setup', async (req, res) => {
+  const secret = req.query.secret;
+  if (secret !== process.env.JWT_SECRET) return res.status(403).json({ error: 'Forbidden' });
+  try {
+    const seed = require('./seed');
+    res.json({ message: 'Setup berhasil!' });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
