@@ -3,11 +3,13 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const session = require('express-session');
+const { PrismaClient } = require('@prisma/client');
+const { execSync } = require('child_process');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({ origin: process.env.FRONTEND_URL || '*', credentials: true }));
+app.use(cors({ origin: '*', credentials: true }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(session({
@@ -20,12 +22,13 @@ app.use(session({
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// SETUP ENDPOINT - jalankan sekali untuk buat admin user
-// replaced, async (req, res) => {
+app.get('/api/do-setup', async (req, res) => {
   if (req.query.key !== 'finrapi2026setup') return res.status(403).json({ error: 'Forbidden' });
   try {
     const bcrypt = require('bcryptjs');
-    const prisma = require('./db');
+    // Run migration first
+    execSync('npx prisma db push --accept-data-loss', { stdio: 'inherit' });
+    const prisma = new PrismaClient();
     await prisma.company.upsert({
       where: { id: 'operator-company-001' },
       update: {},
@@ -37,6 +40,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
       update: { password: hash },
       create: { email: 'agushwork@gmail.com', password: hash, name: 'Super Admin', role: 'SUPERADMIN' }
     });
+    await prisma.$disconnect();
     res.json({ success: true, message: 'Setup berhasil!', email: user.email });
   } catch(e) {
     res.status(500).json({ error: e.message });
@@ -69,7 +73,6 @@ app.use(function(err, req, res, next) {
 
 app.listen(PORT, function() {
   console.log('\n✅ FinTrack Pro running on http://localhost:' + PORT);
-  console.log('   Environment: ' + (process.env.NODE_ENV || 'development'));
   console.log('   Database: ' + (process.env.DATABASE_URL ? 'Connected' : 'Not configured') + '\n');
 });
 
