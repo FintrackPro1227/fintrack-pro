@@ -26,8 +26,18 @@ app.get('/api/do-setup', async (req, res) => {
   if (req.query.key !== 'finrapi2026setup') return res.status(403).json({ error: 'Forbidden' });
   try {
     const bcrypt = require('bcryptjs');
-    // Run migration first
-    execSync('npx prisma db push --accept-data-loss', { stdio: 'inherit' });
+    // Try migrate
+    let migrateResult = 'skipped';
+    try {
+      execSync('npx prisma db push --force-reset', { 
+        stdio: 'pipe',
+        timeout: 60000,
+        env: { ...process.env }
+      });
+      migrateResult = 'success';
+    } catch(me) {
+      migrateResult = 'failed: ' + me.message.substring(0, 100);
+    }
     const prisma = new PrismaClient();
     await prisma.company.upsert({
       where: { id: 'operator-company-001' },
@@ -41,9 +51,9 @@ app.get('/api/do-setup', async (req, res) => {
       create: { email: 'agushwork@gmail.com', password: hash, name: 'Super Admin', role: 'SUPERADMIN' }
     });
     await prisma.$disconnect();
-    res.json({ success: true, message: 'Setup berhasil!', email: user.email });
+    res.json({ success: true, message: 'Setup berhasil!', email: user.email, migrate: migrateResult });
   } catch(e) {
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: e.message, stack: e.stack.substring(0, 300) });
   }
 });
 
