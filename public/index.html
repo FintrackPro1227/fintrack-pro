@@ -260,6 +260,15 @@ input[readonly]{background:var(--surf2)}
   <div class="sb-divider" style="color:#60a5fa"><i class="ti ti-building-bank"></i>Kas & Bank</div>
   <div class="ni" onclick="goOp('kasbank',this)"><i class="ti ti-building-bank"></i>Kas & Bank</div>
 
+  <div class="sb-divider" style="color:#f97316"><i class="ti ti-shopping-cart"></i>Penjualan</div>
+  <div class="ni" onclick="goOp('salesorder',this)"><i class="ti ti-shopping-cart"></i>Sales Order</div>
+  <div class="ni" onclick="goOp('customers',this)"><i class="ti ti-user-heart"></i>Pelanggan</div>
+
+  <div class="sb-divider" style="color:#06b6d4"><i class="ti ti-truck-delivery"></i>Pembelian</div>
+  <div class="ni" onclick="goOp('purchaseorder',this)"><i class="ti ti-truck-delivery"></i>Purchase Order</div>
+  <div class="ni" onclick="goOp('suppliers',this)"><i class="ti ti-building-warehouse"></i>Supplier</div>
+  <div class="ni" onclick="goOp('products',this)"><i class="ti ti-box"></i>Produk & Stok</div>
+
   <div class="sb-divider" style="color:#f59e0b"><i class="ti ti-stack-2"></i>Aset Tetap</div>
   <div class="ni" onclick="goOp('assetlist',this)"><i class="ti ti-stack-2"></i>Daftar Aset</div>
   <div class="ni" onclick="goOp('penyusutan',this)"><i class="ti ti-chart-line-down"></i>Penyusutan</div>
@@ -1180,6 +1189,184 @@ input[readonly]{background:var(--surf2)}
   </div>
 </div>
 
+<!-- ══ PENJUALAN: PRODUK & STOK ══ -->
+<div id="pg-products" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:500;color:var(--ink2)">Master produk / item, digunakan oleh Sales Order & Purchase Order. Stok terupdate otomatis saat SO dikirim / PO diterima.</span>
+    <button class="btn btn-blue btn-sm" style="margin-left:auto" onclick="document.getElementById('add-product-modal').style.display='flex'"><i class="ti ti-plus"></i> Produk baru</button>
+  </div>
+  <div class="g4 mb2" id="prod-kpi"></div>
+  <div class="card">
+    <div class="ch"><span class="ct"><i class="ti ti-box" style="color:#06b6d4"></i>Daftar Produk</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>SKU</th><th>Nama produk</th><th>Kategori</th><th>Satuan</th><th>Harga beli</th><th>Harga jual</th><th>Stok</th><th>Status</th></tr></thead>
+      <tbody id="prod-tb"></tbody>
+    </table></div>
+  </div>
+  <div id="add-product-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.5);align-items:center;justify-content:center">
+    <div style="background:var(--surf);border-radius:12px;border:1px solid var(--bd);width:520px;max-width:95vw;max-height:90vh;overflow-y:auto">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:14px;font-weight:600">Produk / item baru</span>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-product-modal').style.display='none'"><i class="ti ti-x"></i></button>
+      </div>
+      <div style="padding:20px">
+        <div class="g2" style="gap:8px">
+          <div class="fg"><div class="fl">SKU</div><input type="text" id="np-sku" placeholder="SKU-001"></div>
+          <div class="fg"><div class="fl">Satuan</div><input type="text" id="np-unit" placeholder="pcs / box / kg" value="pcs"></div>
+        </div>
+        <div class="fg"><div class="fl">Nama produk</div><input type="text" id="np-name" placeholder="Nama barang"></div>
+        <div class="fg"><div class="fl">Kategori</div><input type="text" id="np-cat" placeholder="Elektronik / ATK / dll"></div>
+        <div class="g2" style="gap:8px">
+          <div class="fg"><div class="fl">Harga beli (Rp)</div><input type="number" id="np-buy" placeholder="0"></div>
+          <div class="fg"><div class="fl">Harga jual (Rp)</div><input type="number" id="np-sell" placeholder="0"></div>
+        </div>
+        <div class="g2" style="gap:8px">
+          <div class="fg"><div class="fl">Stok awal</div><input type="number" id="np-stock" placeholder="0"></div>
+          <div class="fg"><div class="fl">Stok minimum</div><input type="number" id="np-min" placeholder="0"></div>
+        </div>
+        <button class="btn btn-blue" style="width:100%;justify-content:center" onclick="addNewProduct()"><i class="ti ti-check"></i> Simpan produk</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PENJUALAN: PELANGGAN ══ -->
+<div id="pg-customers" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <button class="btn btn-blue btn-sm" style="margin-left:auto" onclick="document.getElementById('add-customer-modal').style.display='flex'"><i class="ti ti-plus"></i> Pelanggan baru</button>
+  </div>
+  <div class="card">
+    <div class="ch"><span class="ct"><i class="ti ti-user-heart" style="color:#f97316"></i>Daftar Pelanggan</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Kode</th><th>Nama pelanggan</th><th>Kontak</th><th>Telepon</th><th>NPWP</th><th>Limit kredit</th><th>Status</th></tr></thead>
+      <tbody id="cust-tb"></tbody>
+    </table></div>
+  </div>
+  <div id="add-customer-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.5);align-items:center;justify-content:center">
+    <div style="background:var(--surf);border-radius:12px;border:1px solid var(--bd);width:480px;max-width:95vw">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:14px;font-weight:600">Pelanggan baru</span>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-customer-modal').style.display='none'"><i class="ti ti-x"></i></button>
+      </div>
+      <div style="padding:20px">
+        <div class="fg"><div class="fl">Nama pelanggan</div><input type="text" id="nc-name" placeholder="PT / CV / Perorangan"></div>
+        <div class="g2" style="gap:8px">
+          <div class="fg"><div class="fl">Kontak person</div><input type="text" id="nc-contact" placeholder="Nama PIC"></div>
+          <div class="fg"><div class="fl">Telepon</div><input type="text" id="nc-phone" placeholder="08xxxxxxxxxx"></div>
+        </div>
+        <div class="fg"><div class="fl">NPWP</div><input type="text" id="nc-npwp" placeholder="00.000.000.0-000.000"></div>
+        <div class="fg"><div class="fl">Limit kredit (Rp)</div><input type="number" id="nc-limit" placeholder="0"></div>
+        <button class="btn btn-blue" style="width:100%;justify-content:center" onclick="addNewCustomer()"><i class="ti ti-check"></i> Simpan pelanggan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PEMBELIAN: SUPPLIER ══ -->
+<div id="pg-suppliers" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <button class="btn btn-blue btn-sm" style="margin-left:auto" onclick="document.getElementById('add-supplier-modal').style.display='flex'"><i class="ti ti-plus"></i> Supplier baru</button>
+  </div>
+  <div class="card">
+    <div class="ch"><span class="ct"><i class="ti ti-building-warehouse" style="color:#06b6d4"></i>Daftar Supplier</span></div>
+    <div class="tw"><table>
+      <thead><tr><th>Kode</th><th>Nama supplier</th><th>Kontak</th><th>Telepon</th><th>NPWP</th><th>Status</th></tr></thead>
+      <tbody id="sup-tb"></tbody>
+    </table></div>
+  </div>
+  <div id="add-supplier-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.5);align-items:center;justify-content:center">
+    <div style="background:var(--surf);border-radius:12px;border:1px solid var(--bd);width:480px;max-width:95vw">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:14px;font-weight:600">Supplier baru</span>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-supplier-modal').style.display='none'"><i class="ti ti-x"></i></button>
+      </div>
+      <div style="padding:20px">
+        <div class="fg"><div class="fl">Nama supplier</div><input type="text" id="ns-name" placeholder="PT / CV / Perorangan"></div>
+        <div class="g2" style="gap:8px">
+          <div class="fg"><div class="fl">Kontak person</div><input type="text" id="ns-contact" placeholder="Nama PIC"></div>
+          <div class="fg"><div class="fl">Telepon</div><input type="text" id="ns-phone" placeholder="08xxxxxxxxxx"></div>
+        </div>
+        <div class="fg"><div class="fl">NPWP</div><input type="text" id="ns-npwp" placeholder="00.000.000.0-000.000"></div>
+        <button class="btn btn-blue" style="width:100%;justify-content:center" onclick="addNewSupplier()"><i class="ti ti-check"></i> Simpan supplier</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PENJUALAN: SALES ORDER ══ -->
+<div id="pg-salesorder" class="page">
+  <div class="g4 mb2" id="so-kpi"></div>
+  <div class="card">
+    <div class="ch"><span class="ct"><i class="ti ti-shopping-cart" style="color:#f97316"></i>Sales Order</span>
+      <button class="btn btn-blue btn-sm" onclick="document.getElementById('add-so-modal').style.display='flex';resetSOForm()"><i class="ti ti-plus"></i> SO baru</button>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>No. SO</th><th>Tanggal</th><th>Pelanggan</th><th>Subtotal</th><th>PPN</th><th>Total</th><th>Status</th><th></th></tr></thead>
+      <tbody id="so-tb"></tbody>
+    </table></div>
+  </div>
+
+  <div id="add-so-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.5);align-items:center;justify-content:center">
+    <div style="background:var(--surf);border-radius:12px;border:1px solid var(--bd);width:680px;max-width:95vw;max-height:90vh;overflow-y:auto">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:14px;font-weight:600">Sales Order baru</span>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-so-modal').style.display='none'"><i class="ti ti-x"></i></button>
+      </div>
+      <div style="padding:20px">
+        <div class="g2" style="gap:8px">
+          <div class="fg"><div class="fl">Pelanggan</div><select id="so-cust"></select></div>
+          <div class="fg"><div class="fl">Tanggal</div><input type="date" id="so-date"></div>
+        </div>
+        <div class="fg">
+          <div class="fl" style="display:flex;justify-content:space-between;align-items:center">Item barang <button class="btn btn-ghost btn-xs" onclick="addSORow()"><i class="ti ti-plus"></i> Baris</button></div>
+          <table style="margin-bottom:6px"><thead><tr><th>Produk</th><th style="width:70px">Qty</th><th style="width:130px">Harga satuan</th><th style="width:130px">Subtotal</th><th></th></tr></thead>
+          <tbody id="so-items"></tbody></table>
+        </div>
+        <div class="fg"><label style="display:flex;align-items:center;gap:6px;font-size:13px"><input type="checkbox" id="so-ppn" onchange="calcSOTotal()"> Kenakan PPN 11%</label></div>
+        <div style="text-align:right;font-size:14px;font-weight:700;margin-bottom:12px">Total: <span id="so-total" style="color:#f97316">Rp 0</span></div>
+        <button class="btn btn-blue" style="width:100%;justify-content:center" onclick="addNewSO()"><i class="ti ti-check"></i> Simpan Sales Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PEMBELIAN: PURCHASE ORDER ══ -->
+<div id="pg-purchaseorder" class="page">
+  <div class="g4 mb2" id="po-kpi"></div>
+  <div class="card">
+    <div class="ch"><span class="ct"><i class="ti ti-truck-delivery" style="color:#06b6d4"></i>Purchase Order</span>
+      <button class="btn btn-blue btn-sm" onclick="document.getElementById('add-po-modal').style.display='flex';resetPOForm()"><i class="ti ti-plus"></i> PO baru</button>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>No. PO</th><th>Tanggal</th><th>Supplier</th><th>Subtotal</th><th>PPN</th><th>Total</th><th>Status</th><th></th></tr></thead>
+      <tbody id="po-tb"></tbody>
+    </table></div>
+  </div>
+
+  <div id="add-po-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.5);align-items:center;justify-content:center">
+    <div style="background:var(--surf);border-radius:12px;border:1px solid var(--bd);width:680px;max-width:95vw;max-height:90vh;overflow-y:auto">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:14px;font-weight:600">Purchase Order baru</span>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-po-modal').style.display='none'"><i class="ti ti-x"></i></button>
+      </div>
+      <div style="padding:20px">
+        <div class="g2" style="gap:8px">
+          <div class="fg"><div class="fl">Supplier</div><select id="po-sup"></select></div>
+          <div class="fg"><div class="fl">Tanggal</div><input type="date" id="po-date"></div>
+        </div>
+        <div class="fg">
+          <div class="fl" style="display:flex;justify-content:space-between;align-items:center">Item barang <button class="btn btn-ghost btn-xs" onclick="addPORow()"><i class="ti ti-plus"></i> Baris</button></div>
+          <table style="margin-bottom:6px"><thead><tr><th>Produk</th><th style="width:70px">Qty</th><th style="width:130px">Harga satuan</th><th style="width:130px">Subtotal</th><th></th></tr></thead>
+          <tbody id="po-items"></tbody></table>
+        </div>
+        <div class="fg"><label style="display:flex;align-items:center;gap:6px;font-size:13px"><input type="checkbox" id="po-ppn" onchange="calcPOTotal()"> Kenakan PPN 11%</label></div>
+        <div style="text-align:right;font-size:14px;font-weight:700;margin-bottom:12px">Total: <span id="po-total" style="color:#06b6d4">Rp 0</span></div>
+        <button class="btn btn-blue" style="width:100%;justify-content:center" onclick="addNewPO()"><i class="ti ti-check"></i> Simpan Purchase Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div></div></div></div><!-- content/main/shell/view-operator -->
 
 <!-- ═══════════ CLIENT PORTAL VIEW ═══════════ -->
@@ -1494,7 +1681,9 @@ const OP_MAP={
   'assetlist':'Aset Tetap — Daftar',
   'penyusutan':'Aset Tetap — Penyusutan',
   'disposal':'Aset Tetap — Disposal',
-  'kartuaset':'Kartu Aset'
+  'kartuaset':'Kartu Aset',
+  'salesorder':'Sales Order','customers':'Data Pelanggan',
+  'purchaseorder':'Purchase Order','suppliers':'Data Supplier','products':'Produk & Stok Barang'
 };
 const OP_ICONS={
   'dash':'ti-layout-dashboard','scanner':'ti-scan','transactions':'ti-arrows-exchange',
@@ -1503,13 +1692,16 @@ const OP_ICONS={
   'trialbal':'ti-scale','finreport':'ti-chart-bar',
   'taxsum':'ti-receipt-tax','ppn':'ti-percentage','pph':'ti-coin','taxcal':'ti-calendar-event',
   'clients':'ti-users','onboard':'ti-user-plus','docsqueue':'ti-inbox',
-  'review':'ti-check','sendreport':'ti-send','billing':'ti-file-invoice','settings':'ti-settings'
+  'review':'ti-check','sendreport':'ti-send','billing':'ti-file-invoice','settings':'ti-settings',
+  'salesorder':'ti-shopping-cart','customers':'ti-user-heart',
+  'purchaseorder':'ti-truck-delivery','suppliers':'ti-building-warehouse','products':'ti-box'
 };
 const OP_COLORS={
   'scanner':'var(--blue)','transactions':'var(--blue)','ar':'var(--blue)','ap':'var(--blue)','cashflow':'var(--blue)',
   'journal':'var(--pur-d)','ledger':'var(--pur-d)','coa':'var(--pur-d)','trialbal':'var(--pur-d)','finreport':'var(--pur-d)',
   'taxsum':'var(--teal-d)','ppn':'var(--teal-d)','pph':'var(--teal-d)','taxcal':'var(--teal-d)',
   'clients':'var(--grn-d)','onboard':'var(--grn-d)','docsqueue':'var(--grn-d)','review':'var(--grn-d)','sendreport':'var(--grn-d)','billing':'var(--grn-d)',
+  'salesorder':'#f97316','customers':'#f97316','purchaseorder':'#06b6d4','suppliers':'#06b6d4','products':'#06b6d4'
 };
 
 function goOp(pg,el){
@@ -2175,6 +2367,261 @@ function renderKartu(idx){
   }
   document.getElementById('ka-sched-tb').innerHTML=rows;
 }
+
+// ═══ PENJUALAN & PEMBELIAN (ERP) ═══
+const PRODUCTS=[
+  {sku:'SKU-001',name:'Laptop ThinkPad E14',cat:'Elektronik',unit:'unit',buy:8500000,sell:10500000,stock:12,min:5},
+  {sku:'SKU-002',name:'Kertas A4 80gr (rim)',cat:'ATK',unit:'rim',buy:45000,sell:60000,stock:120,min:30},
+  {sku:'SKU-003',name:'Kursi Kantor Ergonomis',cat:'Furniture',unit:'unit',buy:950000,sell:1350000,stock:8,min:5},
+];
+const CUSTOMERS=[
+  {code:'CUST-001',name:'PT Maju Bersama',contact:'Budi Santoso',phone:'0812-3456-7890',npwp:'01.234.567.8-901.000',limit:100000000,active:true},
+  {code:'CUST-002',name:'CV Digital Nusantara',contact:'Rina Wijaya',phone:'0813-9988-7766',npwp:'02.345.678.9-012.000',limit:50000000,active:true},
+];
+const SUPPLIERS=[
+  {code:'SUP-001',name:'PT Sumber Elektronik',contact:'Andi Prasetyo',phone:'0811-2233-4455',npwp:'03.456.789.0-123.000',active:true},
+  {code:'SUP-002',name:'CV ATK Sejahtera',contact:'Siti Aminah',phone:'0821-5566-7788',npwp:'04.567.890.1-234.000',active:true},
+];
+const SALES_ORDERS=[
+  {no:'SO-202606-0001',date:'20 Jun 26',cust:'PT Maju Bersama',items:[{sku:'SKU-001',qty:2,price:10500000}],ppn:true,status:'DELIVERED'},
+  {no:'SO-202606-0002',date:'26 Jun 26',cust:'CV Digital Nusantara',items:[{sku:'SKU-002',qty:10,price:60000}],ppn:false,status:'CONFIRMED'},
+];
+const PURCHASE_ORDERS=[
+  {no:'PO-202606-0001',date:'15 Jun 26',sup:'PT Sumber Elektronik',items:[{sku:'SKU-001',qty:5,price:8500000}],ppn:true,status:'RECEIVED'},
+  {no:'PO-202606-0002',date:'27 Jun 26',sup:'CV ATK Sejahtera',items:[{sku:'SKU-002',qty:50,price:45000}],ppn:false,status:'ORDERED'},
+];
+let soRows=[],poRows=[];
+
+function findProduct(sku){return PRODUCTS.find(p=>p.sku===sku);}
+function fmtDate(iso){
+  const d=new Date(iso),mons=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  return d.getDate()+' '+mons[d.getMonth()]+' '+String(d.getFullYear()).slice(2);
+}
+function soTotals(o){const subtotal=o.items.reduce((s,r)=>s+r.qty*r.price,0);const tax=o.ppn?Math.round(subtotal*0.11):0;return{subtotal,tax,total:subtotal+tax};}
+function poTotals(o){const subtotal=o.items.reduce((s,r)=>s+r.qty*r.price,0);const tax=o.ppn?Math.round(subtotal*0.11):0;return{subtotal,tax,total:subtotal+tax};}
+function statusTag(s){
+  const map={DRAFT:'tgr',CONFIRMED:'tb',ORDERED:'tb',DELIVERED:'tg',RECEIVED:'tg',CANCELLED:'tr'};
+  const label={DRAFT:'Draft',CONFIRMED:'Dikonfirmasi',ORDERED:'Dipesan',DELIVERED:'Terkirim',RECEIVED:'Diterima',CANCELLED:'Dibatalkan'};
+  return `<span class="tag ${map[s]}">${label[s]}</span>`;
+}
+
+// ── PRODUK & STOK ──
+function renderProducts(){
+  const totalVal=PRODUCTS.reduce((s,p)=>s+p.stock*p.buy,0);
+  const low=PRODUCTS.filter(p=>p.stock<=p.min).length;
+  const cats=new Set(PRODUCTS.map(p=>p.cat)).size;
+  const margin=PRODUCTS.length?Math.round(PRODUCTS.reduce((s,p)=>s+(p.sell?((p.sell-p.buy)/p.sell*100):0),0)/PRODUCTS.length):0;
+  document.getElementById('prod-kpi').innerHTML=`
+    <div class="kpi"><div class="kpi-bar" style="background:#06b6d4"></div><div class="kpi-lbl">Total produk</div><div class="kpi-val" style="color:#0e7490">${PRODUCTS.length}</div><div class="kpi-sub">${cats} kategori</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Nilai persediaan</div><div class="kpi-val" style="color:var(--blue-d)">${rp(totalVal)}</div><div class="kpi-sub">Berdasarkan harga beli</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Stok menipis</div><div class="kpi-val" style="color:var(--red-d)">${low}</div><div class="kpi-sub">≤ stok minimum</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--grn)"></div><div class="kpi-lbl">Rata-rata margin</div><div class="kpi-val" style="color:var(--grn-d)">${margin}%</div><div class="kpi-sub">Jual vs beli</div></div>`;
+  document.getElementById('prod-tb').innerHTML=PRODUCTS.map(p=>`
+    <tr><td><span class="acc-chip">${p.sku}</span></td><td style="font-weight:500">${p.name}</td><td><span class="tag tgr">${p.cat}</span></td><td>${p.unit}</td>
+    <td>${rp(p.buy)}</td><td style="font-weight:600;color:var(--blue-d)">${rp(p.sell)}</td>
+    <td style="font-weight:600;color:${p.stock<=p.min?'var(--red-d)':'var(--ink)'}">${p.stock} ${p.unit}</td>
+    <td><span class="tag ${p.stock<=p.min?'tr':'tg'}">${p.stock<=p.min?'Stok menipis':'Tersedia'}</span></td></tr>`).join('');
+}
+function addNewProduct(){
+  const name=document.getElementById('np-name').value;
+  if(!name){toast('Nama produk wajib diisi','info');return;}
+  const sku=document.getElementById('np-sku').value||'SKU-'+String(PRODUCTS.length+1).padStart(3,'0');
+  PRODUCTS.push({sku,name,cat:document.getElementById('np-cat').value||'Umum',unit:document.getElementById('np-unit').value||'pcs',
+    buy:parseFloat(document.getElementById('np-buy').value)||0, sell:parseFloat(document.getElementById('np-sell').value)||0,
+    stock:parseFloat(document.getElementById('np-stock').value)||0, min:parseFloat(document.getElementById('np-min').value)||0});
+  document.getElementById('add-product-modal').style.display='none';
+  renderProducts();
+  toast(name+' ditambahkan ke katalog produk','success');
+}
+
+// ── PELANGGAN ──
+function renderCustomers(){
+  document.getElementById('cust-tb').innerHTML=CUSTOMERS.map(c=>`
+   <tr><td><span class="acc-chip">${c.code}</span></td><td style="font-weight:500">${c.name}</td><td>${c.contact||'—'}</td><td>${c.phone||'—'}</td>
+   <td style="font-family:monospace;font-size:11.5px">${c.npwp||'—'}</td><td>${rp(c.limit||0)}</td><td><span class="tag ${c.active?'tg':'tgr'}">${c.active?'Aktif':'Nonaktif'}</span></td></tr>`).join('');
+}
+function addNewCustomer(){
+  const name=document.getElementById('nc-name').value;
+  if(!name){toast('Nama pelanggan wajib diisi','info');return;}
+  CUSTOMERS.push({code:'CUST-'+String(CUSTOMERS.length+1).padStart(3,'0'),name,contact:document.getElementById('nc-contact').value,phone:document.getElementById('nc-phone').value,npwp:document.getElementById('nc-npwp').value,limit:parseFloat(document.getElementById('nc-limit').value)||0,active:true});
+  document.getElementById('add-customer-modal').style.display='none';
+  renderCustomers();
+  toast(name+' ditambahkan sebagai pelanggan','success');
+}
+
+// ── SUPPLIER ──
+function renderSuppliers(){
+  document.getElementById('sup-tb').innerHTML=SUPPLIERS.map(s=>`
+   <tr><td><span class="acc-chip">${s.code}</span></td><td style="font-weight:500">${s.name}</td><td>${s.contact||'—'}</td><td>${s.phone||'—'}</td>
+   <td style="font-family:monospace;font-size:11.5px">${s.npwp||'—'}</td><td><span class="tag ${s.active?'tg':'tgr'}">${s.active?'Aktif':'Nonaktif'}</span></td></tr>`).join('');
+}
+function addNewSupplier(){
+  const name=document.getElementById('ns-name').value;
+  if(!name){toast('Nama supplier wajib diisi','info');return;}
+  SUPPLIERS.push({code:'SUP-'+String(SUPPLIERS.length+1).padStart(3,'0'),name,contact:document.getElementById('ns-contact').value,phone:document.getElementById('ns-phone').value,npwp:document.getElementById('ns-npwp').value,active:true});
+  document.getElementById('add-supplier-modal').style.display='none';
+  renderSuppliers();
+  toast(name+' ditambahkan sebagai supplier','success');
+}
+
+// ── SALES ORDER ──
+function resetSOForm(){
+  soRows=[{sku:PRODUCTS[0]?.sku||'',qty:1,price:PRODUCTS[0]?.sell||0}];
+  document.getElementById('so-cust').innerHTML=CUSTOMERS.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
+  document.getElementById('so-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('so-ppn').checked=false;
+  renderSORows();
+}
+function addSORow(){soRows.push({sku:PRODUCTS[0]?.sku||'',qty:1,price:PRODUCTS[0]?.sell||0});renderSORows();}
+function removeSORow(i){soRows.splice(i,1);renderSORows();}
+function updateSORow(i,field,val){
+  soRows[i][field]=field==='sku'?val:(parseFloat(val)||0);
+  if(field==='sku'){const p=findProduct(val);if(p)soRows[i].price=p.sell;}
+  renderSORows();
+}
+function renderSORows(){
+  document.getElementById('so-items').innerHTML=soRows.map((r,i)=>`<tr>
+      <td><select onchange="updateSORow(${i},'sku',this.value)">${PRODUCTS.map(p=>`<option value="${p.sku}" ${p.sku===r.sku?'selected':''}>${p.name}</option>`).join('')}</select></td>
+      <td><input type="number" value="${r.qty}" min="1" style="width:60px" onchange="updateSORow(${i},'qty',this.value)"></td>
+      <td><input type="number" value="${r.price}" style="width:120px" onchange="updateSORow(${i},'price',this.value)"></td>
+      <td style="font-weight:600">${rp(r.qty*r.price)}</td>
+      <td><button class="btn btn-ghost btn-xs" onclick="removeSORow(${i})"><i class="ti ti-trash"></i></button></td>
+    </tr>`).join('');
+  calcSOTotal();
+}
+function calcSOTotal(){
+  const subtotal=soRows.reduce((s,r)=>s+r.qty*r.price,0);
+  const ppn=document.getElementById('so-ppn').checked;
+  const tax=ppn?Math.round(subtotal*0.11):0;
+  document.getElementById('so-total').textContent=rp(subtotal+tax)+(ppn?` (termasuk PPN ${rp(tax)})`:'');
+}
+function addNewSO(){
+  const cust=document.getElementById('so-cust').value;
+  if(!cust||!soRows.length){toast('Pilih pelanggan dan minimal 1 item','info');return;}
+  const dateStr=document.getElementById('so-date').value;
+  const no='SO-'+dateStr.slice(0,7).replace('-','')+'-'+String(SALES_ORDERS.length+1).padStart(4,'0');
+  SALES_ORDERS.unshift({no,date:fmtDate(dateStr),cust,items:soRows.map(r=>({...r})),ppn:document.getElementById('so-ppn').checked,status:'DRAFT'});
+  document.getElementById('add-so-modal').style.display='none';
+  renderSO();
+  toast(no+' berhasil dibuat (draft)','success');
+}
+function renderSO(){
+  const pending=SALES_ORDERS.filter(o=>o.status==='CONFIRMED').length;
+  const delivered=SALES_ORDERS.filter(o=>o.status==='DELIVERED').length;
+  document.getElementById('so-kpi').innerHTML=`
+    <div class="kpi"><div class="kpi-bar" style="background:#f97316"></div><div class="kpi-lbl">Total Sales Order</div><div class="kpi-val" style="color:#c2410c">${SALES_ORDERS.length}</div><div class="kpi-sub">Seluruh status</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--grn)"></div><div class="kpi-lbl">Nilai SO</div><div class="kpi-val" style="color:var(--grn-d)">${rp(SALES_ORDERS.reduce((s,o)=>s+soTotals(o).total,0))}</div><div class="kpi-sub">Termasuk PPN</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amb)"></div><div class="kpi-lbl">Menunggu pengiriman</div><div class="kpi-val" style="color:var(--amb-d)">${pending}</div><div class="kpi-sub">Status dikonfirmasi</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Sudah terkirim</div><div class="kpi-val" style="color:var(--blue-d)">${delivered}</div><div class="kpi-sub">Jurnal otomatis terposting</div></div>`;
+  document.getElementById('so-tb').innerHTML=SALES_ORDERS.map(o=>{
+    const t=soTotals(o);
+    let actions;
+    if(o.status==='DRAFT') actions=`<button class="btn btn-blue btn-xs" onclick="confirmSO('${o.no}')">Konfirmasi</button><button class="btn btn-ghost btn-xs" onclick="cancelSO('${o.no}')">Batal</button>`;
+    else if(o.status==='CONFIRMED') actions=`<button class="btn btn-grn btn-xs" onclick="deliverSO('${o.no}')">Kirim</button><button class="btn btn-ghost btn-xs" onclick="cancelSO('${o.no}')">Batal</button>`;
+    else actions=`<button class="btn btn-ghost btn-xs" onclick="toast('Jurnal ${o.no} — lihat menu Jurnal Entries','info')"><i class="ti ti-notebook"></i></button>`;
+    return `<tr><td><span class="acc-chip">${o.no}</span></td><td style="color:var(--ink3)">${o.date}</td><td style="font-weight:500">${o.cust}</td>
+    <td>${rp(t.subtotal)}</td><td>${t.tax?rp(t.tax):'—'}</td><td style="font-weight:700;color:#c2410c">${rp(t.total)}</td>
+    <td>${statusTag(o.status)}</td><td><div style="display:flex;gap:5px">${actions}</div></td></tr>`;
+  }).join('');
+}
+function confirmSO(no){
+  const o=SALES_ORDERS.find(x=>x.no===no);if(!o)return;
+  for(const r of o.items){const p=findProduct(r.sku);if(p&&p.stock<r.qty){toast(`Stok "${p.name}" tidak cukup (tersedia ${p.stock})`,'error');return;}}
+  o.status='CONFIRMED';renderSO();toast(no+' dikonfirmasi','success');
+}
+function deliverSO(no){
+  const o=SALES_ORDERS.find(x=>x.no===no);if(!o)return;
+  o.items.forEach(r=>{const p=findProduct(r.sku);if(p)p.stock-=r.qty;});
+  o.status='DELIVERED';
+  renderSO();renderProducts();
+  const t=soTotals(o);
+  toast(`${no} terkirim — jurnal otomatis: Piutang ${rp(t.total)} / Pendapatan ${rp(t.subtotal)}${t.tax?' / PPN Keluaran '+rp(t.tax):''} + HPP-Persediaan`,'success');
+}
+function cancelSO(no){
+  const o=SALES_ORDERS.find(x=>x.no===no);if(!o)return;
+  if(o.status==='DELIVERED'){toast('SO yang sudah terkirim tidak bisa dibatalkan','info');return;}
+  o.status='CANCELLED';renderSO();toast(no+' dibatalkan','info');
+}
+
+// ── PURCHASE ORDER ──
+function resetPOForm(){
+  poRows=[{sku:PRODUCTS[0]?.sku||'',qty:1,price:PRODUCTS[0]?.buy||0}];
+  document.getElementById('po-sup').innerHTML=SUPPLIERS.map(s=>`<option value="${s.name}">${s.name}</option>`).join('');
+  document.getElementById('po-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('po-ppn').checked=false;
+  renderPORows();
+}
+function addPORow(){poRows.push({sku:PRODUCTS[0]?.sku||'',qty:1,price:PRODUCTS[0]?.buy||0});renderPORows();}
+function removePORow(i){poRows.splice(i,1);renderPORows();}
+function updatePORow(i,field,val){
+  poRows[i][field]=field==='sku'?val:(parseFloat(val)||0);
+  if(field==='sku'){const p=findProduct(val);if(p)poRows[i].price=p.buy;}
+  renderPORows();
+}
+function renderPORows(){
+  document.getElementById('po-items').innerHTML=poRows.map((r,i)=>`<tr>
+      <td><select onchange="updatePORow(${i},'sku',this.value)">${PRODUCTS.map(p=>`<option value="${p.sku}" ${p.sku===r.sku?'selected':''}>${p.name}</option>`).join('')}</select></td>
+      <td><input type="number" value="${r.qty}" min="1" style="width:60px" onchange="updatePORow(${i},'qty',this.value)"></td>
+      <td><input type="number" value="${r.price}" style="width:120px" onchange="updatePORow(${i},'price',this.value)"></td>
+      <td style="font-weight:600">${rp(r.qty*r.price)}</td>
+      <td><button class="btn btn-ghost btn-xs" onclick="removePORow(${i})"><i class="ti ti-trash"></i></button></td>
+    </tr>`).join('');
+  calcPOTotal();
+}
+function calcPOTotal(){
+  const subtotal=poRows.reduce((s,r)=>s+r.qty*r.price,0);
+  const ppn=document.getElementById('po-ppn').checked;
+  const tax=ppn?Math.round(subtotal*0.11):0;
+  document.getElementById('po-total').textContent=rp(subtotal+tax)+(ppn?` (termasuk PPN ${rp(tax)})`:'');
+}
+function addNewPO(){
+  const sup=document.getElementById('po-sup').value;
+  if(!sup||!poRows.length){toast('Pilih supplier dan minimal 1 item','info');return;}
+  const dateStr=document.getElementById('po-date').value;
+  const no='PO-'+dateStr.slice(0,7).replace('-','')+'-'+String(PURCHASE_ORDERS.length+1).padStart(4,'0');
+  PURCHASE_ORDERS.unshift({no,date:fmtDate(dateStr),sup,items:poRows.map(r=>({...r})),ppn:document.getElementById('po-ppn').checked,status:'DRAFT'});
+  document.getElementById('add-po-modal').style.display='none';
+  renderPO();
+  toast(no+' berhasil dibuat (draft)','success');
+}
+function renderPO(){
+  const waiting=PURCHASE_ORDERS.filter(o=>o.status==='ORDERED').length;
+  const received=PURCHASE_ORDERS.filter(o=>o.status==='RECEIVED').length;
+  document.getElementById('po-kpi').innerHTML=`
+    <div class="kpi"><div class="kpi-bar" style="background:#06b6d4"></div><div class="kpi-lbl">Total Purchase Order</div><div class="kpi-val" style="color:#0e7490">${PURCHASE_ORDERS.length}</div><div class="kpi-sub">Seluruh status</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Nilai PO</div><div class="kpi-val" style="color:var(--red-d)">${rp(PURCHASE_ORDERS.reduce((s,o)=>s+poTotals(o).total,0))}</div><div class="kpi-sub">Termasuk PPN</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amb)"></div><div class="kpi-lbl">Menunggu barang</div><div class="kpi-val" style="color:var(--amb-d)">${waiting}</div><div class="kpi-sub">Status dipesan</div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--blue)"></div><div class="kpi-lbl">Sudah diterima</div><div class="kpi-val" style="color:var(--blue-d)">${received}</div><div class="kpi-sub">Jurnal otomatis terposting</div></div>`;
+  document.getElementById('po-tb').innerHTML=PURCHASE_ORDERS.map(o=>{
+    const t=poTotals(o);
+    let actions;
+    if(o.status==='DRAFT') actions=`<button class="btn btn-blue btn-xs" onclick="orderPO('${o.no}')">Kirim ke Supplier</button><button class="btn btn-ghost btn-xs" onclick="cancelPO('${o.no}')">Batal</button>`;
+    else if(o.status==='ORDERED') actions=`<button class="btn btn-grn btn-xs" onclick="receivePO('${o.no}')">Terima Barang</button><button class="btn btn-ghost btn-xs" onclick="cancelPO('${o.no}')">Batal</button>`;
+    else actions=`<button class="btn btn-ghost btn-xs" onclick="toast('Jurnal ${o.no} — lihat menu Jurnal Entries','info')"><i class="ti ti-notebook"></i></button>`;
+    return `<tr><td><span class="acc-chip">${o.no}</span></td><td style="color:var(--ink3)">${o.date}</td><td style="font-weight:500">${o.sup}</td>
+    <td>${rp(t.subtotal)}</td><td>${t.tax?rp(t.tax):'—'}</td><td style="font-weight:700;color:#0e7490">${rp(t.total)}</td>
+    <td>${statusTag(o.status)}</td><td><div style="display:flex;gap:5px">${actions}</div></td></tr>`;
+  }).join('');
+}
+function orderPO(no){
+  const o=PURCHASE_ORDERS.find(x=>x.no===no);if(!o)return;
+  o.status='ORDERED';renderPO();toast(no+' dikirim ke supplier','success');
+}
+function receivePO(no){
+  const o=PURCHASE_ORDERS.find(x=>x.no===no);if(!o)return;
+  o.items.forEach(r=>{const p=findProduct(r.sku);if(p){p.stock+=r.qty;p.buy=r.price;}});
+  o.status='RECEIVED';
+  renderPO();renderProducts();
+  const t=poTotals(o);
+  toast(`${no} diterima — jurnal otomatis: Persediaan ${rp(t.subtotal)}${t.tax?' + PPN Masukan '+rp(t.tax):''} / Hutang Usaha ${rp(t.total)}`,'success');
+}
+function cancelPO(no){
+  const o=PURCHASE_ORDERS.find(x=>x.no===no);if(!o)return;
+  if(o.status==='RECEIVED'){toast('PO yang sudah diterima tidak bisa dibatalkan','info');return;}
+  o.status='CANCELLED';renderPO();toast(no+' dibatalkan','info');
+}
+
+renderProducts();renderCustomers();renderSuppliers();renderSO();renderPO();
 
 // ═══ A/R & A/P PER ENTITAS ═══ (added to existing openTxPanel)
 // extend goOp to auto-init new pages

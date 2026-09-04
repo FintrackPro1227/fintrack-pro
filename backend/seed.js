@@ -40,6 +40,7 @@ async function main() {
     { code: '1000', name: 'Kas dan Bank', type: 'ASSET', category: 'Aset Lancar', normalBalance: 'DEBIT' },
     { code: '1100', name: 'Piutang Usaha', type: 'ASSET', category: 'Aset Lancar', normalBalance: 'DEBIT' },
     { code: '1300', name: 'PPN Masukan', type: 'ASSET', category: 'Aset Pajak', normalBalance: 'DEBIT' },
+    { code: '1400', name: 'Persediaan Barang', type: 'ASSET', category: 'Aset Lancar', normalBalance: 'DEBIT' },
     { code: '1500', name: 'Aset Tetap', type: 'ASSET', category: 'Aset Tidak Lancar', normalBalance: 'DEBIT' },
     { code: '1600', name: 'Akumulasi Penyusutan', type: 'ASSET', category: 'Aset Tidak Lancar', normalBalance: 'CREDIT' },
     { code: '2100', name: 'Hutang Usaha', type: 'LIABILITY', category: 'Kewajiban Lancar', normalBalance: 'CREDIT' },

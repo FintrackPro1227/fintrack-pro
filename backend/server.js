@@ -71,6 +71,9 @@ app.use('/api/reports',       require('./routes/reports'));
 app.use('/api/billing',       require('./routes/billing'));
 app.use('/api/ai',            require('./routes/ai'));
 app.use('/api/notifications', require('./routes/notifications'));
+app.use('/api/products',      require('./routes/products'));
+app.use('/api/sales',         require('./routes/sales'));
+app.use('/api/purchasing',    require('./routes/purchasing'));
 
 app.use(function(req, res) {
   res.sendFile(path.join(__dirname, '../public/index.html'));
